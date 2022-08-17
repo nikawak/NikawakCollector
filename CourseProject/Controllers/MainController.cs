@@ -13,7 +13,7 @@ namespace CourseProject.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            //await _seedData.EnsureData();
+            await _seedData.EnsureData();
             return View();
         }
     }
