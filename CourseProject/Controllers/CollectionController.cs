@@ -149,7 +149,7 @@ namespace CourseProject.Controllers
             string imageName = collection.ImagePath;
 
             string mimeType = "image/" + imageName.Split(".")[1];
-            using (var dbx = new DropboxClient("sl.BNgQyySgWdzp8NMDF6uh1vUWcozxs1xR0dZG_aRpwIviiY-Q36XRXxSLaK6A4KvcQQ82Anjzo6UNn6RlJd3YyR6hoBcrFlzBB6gzjXpjFYv_JXY7hd7nQ2SBrjfqZvueopyOPp81Kv3s"))
+            using (var dbx = new DropboxClient("sl.BNis_ZaoqUYvA-nI-AdqKtUH2pgZqlTD5eQKNJm9QBF5i7Qyd_sOeOhXTwnW74p2o6rtO9MMZaCICzHKLmtJtQhUPqvWcQFxSG434SoJl_7qnfJHiCiFeLWXi238TXC0qPZMMZyFqZuK"))
             {           
                 using (var response = await dbx.Files.DownloadAsync(imageName))
                 {
@@ -162,7 +162,7 @@ namespace CourseProject.Controllers
         {
             
             string imageName = "/" + image.FileName;
-            using (var dbx = new DropboxClient("sl.BNgQyySgWdzp8NMDF6uh1vUWcozxs1xR0dZG_aRpwIviiY-Q36XRXxSLaK6A4KvcQQ82Anjzo6UNn6RlJd3YyR6hoBcrFlzBB6gzjXpjFYv_JXY7hd7nQ2SBrjfqZvueopyOPp81Kv3s"))
+            using (var dbx = new DropboxClient("sl.BNis_ZaoqUYvA-nI-AdqKtUH2pgZqlTD5eQKNJm9QBF5i7Qyd_sOeOhXTwnW74p2o6rtO9MMZaCICzHKLmtJtQhUPqvWcQFxSG434SoJl_7qnfJHiCiFeLWXi238TXC0qPZMMZyFqZuK"))
             {
                 var response = await dbx.Files.UploadAsync(imageName, body:image.OpenReadStream());
             }
