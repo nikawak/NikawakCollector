@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Collection>
+
+<div class="container">
+
+@if(@Model.Count() == 0)
+{
+    <h3>There is no one collection</h3>
+    <a asp-controller="Collection" asp-action="CreateCollection">Create first collection</a>
+}
+else
+{
+    <a asp-controller="Collection" asp-action="CreateCollection" class="mb-3">Create new collection</a>
+
+    foreach(var collection in @Model)
+    {
+        <div class="card" style="width: 18rem;">
+             <!--<img class="card-img-top" src=""/>-->
+
+
+            <div class="card-body">
+                <h5 class="card-title">@collection.Name</h5>
+                <h5 class="card-title">Theme: @collection.Theme</h5>
+                <p class="card-text">@collection.Description</p>
+                <a asp-action="CollectionItems" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-primary">See items</a>
+            </div>
+        </div>
+    }
+}
+</div>

@@ -1,0 +1,56 @@
+﻿@using CourseProject.Models.Enums
+
+@model CreateItemViewModel
+
+
+<div class="container card border-primary box-shadow w-75">
+    <div class="align-content-center align-self-center">
+        <form asp-action="CreateItem" asp-controller="Collection" method="post">
+                
+            <div asp-validation-summary="All"></div>
+                <div class="d-flex flex-column">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Input Collection name"/>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <input asp-for="CollectionId" value="@ViewBag.Collection.Id" hidden/>
+                
+            @{
+                foreach(CollectionProperty property in @ViewBag.Properties)
+                {
+                        <label>@property.Name</label>
+
+                    @if(@property.Type == PropertyType.Number_Input)
+                    {
+                        <input class="form-control" name="values" type="number"/>
+                    }
+                    @if(@property.Type == PropertyType.Date_Input)
+                    {
+                        <input class="form-control" name="values" type="date"/>
+                    }
+                    @if(@property.Type == PropertyType.Check_Box)
+                    {
+                           <input id="checkHidden" hidden name="values" value="false"/>
+                        <input type="checkbox" id="checkInput" value="false"/>
+                    }
+                    @if(@property.Type == PropertyType.Text_Input)
+                    {
+                        <input class="form-control" name="values" type="text"/>
+                    }
+                    @if(@property.Type == PropertyType.Text_Area)
+                    {
+                        <textarea class="form-control" maxlength="64" name="values"></textarea>
+                    }
+                }
+            }
+
+                <div id="inputBlock"></div>
+                <button type="submit" class="btn btn-outline-primary btn-block w-100 mt-4 mb-4">Submit</button>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{
+   
+}

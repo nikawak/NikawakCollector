@@ -1,0 +1,48 @@
+﻿@model CreateCollectionViewModel
+
+@{
+    var propertyTypes = ViewBag.PropertyType as IEnumerable<SelectListItem>;
+    var collectionThemes = ViewBag.Theme as IEnumerable<SelectListItem>;
+}
+
+<div class="container card border-primary box-shadow w-75">
+    <div class="align-content-center align-self-center">
+        <form asp-action="CreateCollection" asp-controller="Collection" method="post" enctype="multipart/form-data">
+                
+            <div asp-validation-summary="All"></div>
+                <input asp-for="Image" accept="image/png,image/jpeg"/>
+                <div class="d-flex flex-column">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Input Collection name"/>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="d-flex flex-column">
+                    <label asp-for="Description"></label>
+                    <input asp-for="Description" class="form-control" placeholder="Input Collection description"/>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-column">
+                    <label asp-for="Theme"></label>
+                    <select class="custom-select" asp-for="Theme" asp-items="collectionThemes"></select>
+                </div>
+
+                <label class="mt-4 mb-3 flex-lg-wrap">You can add properties (inputs) to each item of this collection</label>
+                <br/><label asp-for="PropertyType"></label>
+
+                <div class="input-group w-100">
+
+                    <select class="custom-select" id="propertySelect" asp-for="PropertyType" asp-items="propertyTypes">
+                    </select>
+
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" onclick="AddElement()" type="button">Button</button>
+                    </div>
+
+                    
+                </div>
+                <div id="inputBlock"></div>
+                <button type="submit" class="btn btn-outline-primary btn-block w-100 mt-4 mb-4">Submit</button>
+        </form>
+    </div>
+</div>

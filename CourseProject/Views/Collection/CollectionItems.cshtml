@@ -1,0 +1,38 @@
+﻿@using CourseProject.Models.Enums
+@model Tuple<List<Item>, Collection>
+@{
+    var collection = @Model.Item2;
+    var collectionProperties = collection.Properties;
+    var items = @Model.Item1;
+
+    <h2>Items of @collection.Name collection</h2>
+
+    
+    @if (@items == null || @items.Count() == 0)
+    {
+        <div>
+            <h3>There is no one item</h3>
+            <a asp-route-collectionId="@collection.Id" asp-action="CreateItem" asp-controller="Collection">Create first item</a>
+        </div>
+    }
+    else
+    {
+        <a asp-route-collectionId="@collection.Id" asp-action="CreateItem" asp-controller="Collection">Create new item</a>
+
+        @for (int i = 0; i < items.Count; i++)
+        {
+            var properties = items[i].Properties;
+
+            <div class="card align-items-center bg-light border-secondary w-25">
+                <div class="card-title"><h3>@items[i].Name</h3></div>
+                <div class="card-text">
+                    @for(int j = 0; j < properties.Count; j++)
+                    {
+                        <text>@collectionProperties[j].Name: @properties[j].PropertyValue</text><br />
+                    }
+                </div>
+            </div>
+        }
+    }
+
+}
