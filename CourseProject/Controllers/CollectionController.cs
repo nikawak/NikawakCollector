@@ -49,7 +49,8 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCollection(CreateCollectionViewModel model, string[] propertyNames, string[] propertyTypes)
         {
-            await DropImageWrite(model.Image);
+            var imageName = "/" + DateTime.Now.ToString() + model.Image.FileName;
+            await DropImageWrite(model.Image, imageName);
             var user = await _accountService.GetUserAsync(User);
             var userId = await _accountService.GetUserIdAsync(User);
             var collection = new Collection()
@@ -59,6 +60,7 @@ namespace CourseProject.Controllers
                 Theme = model.Theme,
                 User = user,
                 UserId = userId,
+                ImagePath = imageName
             };
             await _collectionRepository.CreateAsync(collection);
 
@@ -148,8 +150,9 @@ namespace CourseProject.Controllers
             var collection = await _collectionRepository.GetAsync(collectionId);
             string imageName = collection.ImagePath;
 
-            string mimeType = "image/" + imageName.Split(".")[1];
-            using (var dbx = new DropboxClient("sl.BNis_ZaoqUYvA-nI-AdqKtUH2pgZqlTD5eQKNJm9QBF5i7Qyd_sOeOhXTwnW74p2o6rtO9MMZaCICzHKLmtJtQhUPqvWcQFxSG434SoJl_7qnfJHiCiFeLWXi238TXC0qPZMMZyFqZuK"))
+            var split = imageName.Split(".");
+            string mimeType = "image/" + split[split.Length-1];
+            using (var dbx = new DropboxClient("sl.BNiKLosmIf1zMrb449q-7SEmn-4VfEUK_TahTd12WUTUk-l8SVqA_I2GGKvQh_1eoM33ZYPAKbmZP7KLBynQiTU3FlP2NmGP44kfkPecllKm_6_igcqhaK3kEU6X-4snOMCVgZ0qPKDC"))
             {           
                 using (var response = await dbx.Files.DownloadAsync(imageName))
                 {
@@ -158,11 +161,9 @@ namespace CourseProject.Controllers
                 }
             }
         }
-        public async Task DropImageWrite(IFormFile image)
-        {
-            
-            string imageName = "/" + image.FileName;
-            using (var dbx = new DropboxClient("sl.BNis_ZaoqUYvA-nI-AdqKtUH2pgZqlTD5eQKNJm9QBF5i7Qyd_sOeOhXTwnW74p2o6rtO9MMZaCICzHKLmtJtQhUPqvWcQFxSG434SoJl_7qnfJHiCiFeLWXi238TXC0qPZMMZyFqZuK"))
+        public async Task DropImageWrite(IFormFile image, string imageName)
+        {     
+            using (var dbx = new DropboxClient("sl.BNiKLosmIf1zMrb449q-7SEmn-4VfEUK_TahTd12WUTUk-l8SVqA_I2GGKvQh_1eoM33ZYPAKbmZP7KLBynQiTU3FlP2NmGP44kfkPecllKm_6_igcqhaK3kEU6X-4snOMCVgZ0qPKDC"))
             {
                 var response = await dbx.Files.UploadAsync(imageName, body:image.OpenReadStream());
             }

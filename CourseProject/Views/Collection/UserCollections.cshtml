@@ -14,7 +14,8 @@ else
     foreach(var collection in @Model)
     {
         <div class="card" style="width: 18rem;">
-             <!--<img class="card-img-top" src=""/>-->
+
+             <img class="card-img-top" src="@Url.Action("DropImageRead", "Collection" , new {collectionId = collection.Id})"/>
 
 
             <div class="card-body">
