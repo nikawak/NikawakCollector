@@ -19,9 +19,9 @@ namespace CourseProject.Services.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task CreateRangeAsync(IEnumerable<Property> properties)
+        public async Task CreateRangeAsync(IEnumerable<Property> entities)
         {
-            await _context.AddRangeAsync(properties);
+            await _context.AddRangeAsync(entities);
             await _context.SaveChangesAsync();
         }
 

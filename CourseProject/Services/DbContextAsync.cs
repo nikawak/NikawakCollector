@@ -14,15 +14,15 @@ namespace CourseProject.Services
         public DbSet<CollectionProperty> CollectionProperties { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
             foreach(var foreignKey in builder.Model.GetEntityTypes()
                                                    .SelectMany(e => e.GetForeignKeys()))
             {
-                foreignKey.DeleteBehavior = DeleteBehavior.Cascade;
+                foreignKey.DeleteBehavior = DeleteBehavior.ClientCascade;
             }
             builder.Entity<CollectionProperty>()
                 .Property(e => e.Type)
