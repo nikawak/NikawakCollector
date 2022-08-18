@@ -1,0 +1,29 @@
+﻿@model Tuple<List<Collection>, List<Item>>
+
+@{
+    var count = 5;
+    var collections = @Model.Item1;
+    var items = @Model.Item2;
+    <div>
+    
+        <h3>Biggest collections</h3>
+            <div>
+                @for(int i = 0; i < count; i++)
+                {
+                    <h4>@collections[i].Name</h4>
+                    <h5>@collections[i].CollectionItems.Count items</h5>
+                    <a class="btn btn-primary" asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collections[i].Id">Show collection</a>
+                }
+            </div>
+
+                <h3>Lastest items</h3>
+            <div>
+                @for(int i = 0; i < count; i++)
+                {
+                    <h4>@items[i].Name</h4>
+
+                    <a class="btn btn-primary" asp-action="UserCollections" asp-action="Collection" asp-route-item="@items[i]">Show Item</a>
+                }
+            </div>
+    </div>
+}

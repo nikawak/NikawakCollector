@@ -1,5 +1,4 @@
-﻿@using CourseProject.Models.Enums
-@model Tuple<List<Item>, Collection>
+﻿@model Tuple<List<Item>, Collection>
 @{
     var collection = @Model.Item2;
     var collectionProperties = collection.Properties;
@@ -8,17 +7,19 @@
     <h2>Items of @collection.Name collection</h2>
 
     
-    @if (@items == null || @items.Count() == 0)
+    @if (ViewBag.IsOwnerOrAdmin && (@items == null || @items.Count() == 0))
     {
         <div>
             <h3>There is no one item</h3>
-            <a asp-route-collectionId="@collection.Id" asp-action="CreateItem" asp-controller="Collection">Create first item</a>
+            <a asp-route-collectionId="@collection.Id" asp-action="CreateItem" asp-controller="Item">Create first item</a>
         </div>
     }
     else
     {
-        <a asp-route-collectionId="@collection.Id" asp-action="CreateItem" asp-controller="Collection">Create new item</a>
-
+        @if (ViewBag.IsOwnerOrAdmin)
+        {
+            <a asp-route-collectionId="@collection.Id" asp-action="CreateItem" asp-controller="Item">Create new item</a>
+        }
         @for (int i = 0; i < items.Count; i++)
         {
             var properties = items[i].Properties;

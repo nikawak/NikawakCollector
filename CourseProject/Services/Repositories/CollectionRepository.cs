@@ -27,17 +27,17 @@ namespace CourseProject.Services.Repositories
 
         public async Task<IEnumerable<Collection>> GetAllAsync()
         {
-            return await _context.Collections.ToListAsync();
+            return await _context.Collections.Include(i=>i.CollectionItems).Include(p => p.Properties).ToListAsync();
         }
 
         public async Task<Collection> GetAsync(Guid id)
         {
-            return await _context.Collections.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Collections.Include(i => i.CollectionItems).Include(p => p.Properties).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<Collection>> GetByUserAsync(string userId)
         {
-            return await _context.Collections.Where(x => x.UserId == userId).ToListAsync();
+            return await _context.Collections.Include(i => i.CollectionItems).Include(p => p.Properties).Where(x => x.UserId == userId).ToListAsync();
         }
 
         public async Task UpdateAsync(Collection entity)

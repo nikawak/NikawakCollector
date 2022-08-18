@@ -25,19 +25,25 @@ namespace CourseProject.Services.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteRangeAsync(IEnumerable<Item> entities)
+        {
+            _context.Items.RemoveRange(entities);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Item>> GetAllAsync()
         {
-            return await _context.Items.ToListAsync();
+            return await _context.Items.Include(t => t.Tags).Include(p => p.Properties).ToListAsync();
         }
 
         public async Task<Item> GetAsync(Guid id)
         {
-            return await _context.Items.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Items.Include(t => t.Tags).Include(p=>p.Properties).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<Item>> GetByCollectionAsync(Guid collectionId)
         {
-            return await _context.Items.Where(x => x.CollectionId == collectionId).ToListAsync();
+            return await _context.Items.Where(x => x.CollectionId == collectionId).Include(t => t.Tags).Include(p => p.Properties).ToListAsync();
         }
 
         public async Task UpdateAsync(Item entity)

@@ -5,8 +5,7 @@ using CourseProject.Models.ViewModels;
 using CourseProject.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Dropbox.Api;
-using Dropbox.Api.Files;
+using CourseProject.Services;
 
 namespace CourseProject.Controllers
 {
@@ -27,17 +26,32 @@ namespace CourseProject.Controllers
             _itemRepository = itemRepository;
             _propertyRepository = propertyRepository;
         }
+
+
         [HttpGet]
         public async Task<IActionResult> UserCollections()
         {
             var userId = await _accountService.GetUserIdAsync(User);
             var collections = await _collectionRepository.GetByUserAsync(userId);
-            //ViewBag.Image = await Drop();
 
+            return View(collections.Reverse());
+        }
+        [HttpGet]
+        public async Task<IActionResult> UserCollections(string userId)
+        {
+            var collections = (await _collectionRepository.GetByUserAsync(userId)).ToList();
+            if (collections != null && collections[0] != null) 
+            {
+                var isOwner = collections[0].UserId == await _accountService.GetUserIdAsync(User);
+                var isAdmin = User.IsInRole("Admin");
+                ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
+            }
 
-
+            collections.Reverse();
             return View(collections);
         }
+
+
         [HttpGet]
         public IActionResult CreateCollection()
         {
@@ -49,16 +63,14 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCollection(CreateCollectionViewModel model, string[] propertyNames, string[] propertyTypes)
         {
-            var imageName = "/" + DateTime.Now.ToString() + model.Image.FileName;
+            var imageName = "/" + DateTime.Now.ToString().Replace(".","-") + model.Image.FileName;
             await DropImageWrite(model.Image, imageName);
-            var user = await _accountService.GetUserAsync(User);
             var userId = await _accountService.GetUserIdAsync(User);
             var collection = new Collection()
             {
                 Name = model.Name,
                 Description = model.Description,
                 Theme = model.Theme,
-                User = user,
                 UserId = userId,
                 ImagePath = imageName
             };
@@ -83,67 +95,19 @@ namespace CourseProject.Controllers
 
             return RedirectToAction("UserCollections", "Collection");
         }
-        [HttpGet]
-        public async Task<IActionResult> CollectionItems(Guid collectionId)
-        {
-            var items = await _itemRepository.GetByCollectionAsync(collectionId);
 
-            foreach(var item in items)
-            {
-                var properties = await _propertyRepository.GetByItemAsync(item.Id);
-                item.Properties = new List<Property>(properties);
-            }
+        public async Task<IActionResult> DeleteCollection(Guid collectionId)
+        {
             var collection = await _collectionRepository.GetAsync(collectionId);
-            var collectionProperty = await _collectionPropertyRepository.GetByCollectionAsync(collection.Id);
-            collection.Properties = collectionProperty.ToList();
+            var items = await _itemRepository.GetByCollectionAsync(collection.Id);
 
-            var tuple = new Tuple<List<Item>, Collection>(items.ToList(), collection);
+            await _itemRepository.DeleteRangeAsync(items);
+            
+            await _collectionRepository.DeleteAsync(collection);
 
-            return View(tuple);
-        }
-        [HttpGet]
-        public async Task<IActionResult> CreateItem(Guid collectionId)
-        {
-
-            var collection = await _collectionRepository.GetAsync(collectionId);
-            var properties = await _collectionPropertyRepository.GetByCollectionAsync(collectionId);
-
-
-            ViewBag.Collection = collection;
-            ViewBag.Properties = properties;
-
-            return View();
+            return RedirectToAction("UserCollections","Collection");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateItem(CreateItemViewModel model, string[] values)
-        {
-            var item = new Item()
-            {
-                Name = model.Name,
-                CollectionId = model.CollectionId,
-            };
-            await _itemRepository.CreateAsync(item);
-
-            var collectionPropertiesAsync = await _collectionPropertyRepository.GetByCollectionAsync(model.CollectionId);
-            var collectionProperties = collectionPropertiesAsync.ToArray();
-            var properties = new List<Property>();
-
-            for (int i = 0; i < values.Length; i++) 
-            {
-                var property = new Property()
-                {
-                    ItemId = item.Id,
-                    CollectionPropertyId = collectionProperties[i].Id,
-                    PropertyValue = values[i]
-                };
-                properties.Add(property);
-            }
-
-            await _propertyRepository.CreateRangeAsync(properties);
-
-            return RedirectToAction("UserCollections", "Collection");
-        }
 
         public async Task<FileContentResult> DropImageRead(Guid collectionId)
         {
@@ -152,21 +116,13 @@ namespace CourseProject.Controllers
 
             var split = imageName.Split(".");
             string mimeType = "image/" + split[split.Length-1];
-            using (var dbx = new DropboxClient("sl.BNiKLosmIf1zMrb449q-7SEmn-4VfEUK_TahTd12WUTUk-l8SVqA_I2GGKvQh_1eoM33ZYPAKbmZP7KLBynQiTU3FlP2NmGP44kfkPecllKm_6_igcqhaK3kEU6X-4snOMCVgZ0qPKDC"))
-            {           
-                using (var response = await dbx.Files.DownloadAsync(imageName))
-                {
-                    var bytes = await response.GetContentAsByteArrayAsync();
-                    return File(bytes, mimeType);
-                }
-            }
+
+            var bytes = await DropBoxService.ReadImageAsync(imageName);
+            return File(bytes, mimeType);
         }
         public async Task DropImageWrite(IFormFile image, string imageName)
-        {     
-            using (var dbx = new DropboxClient("sl.BNiKLosmIf1zMrb449q-7SEmn-4VfEUK_TahTd12WUTUk-l8SVqA_I2GGKvQh_1eoM33ZYPAKbmZP7KLBynQiTU3FlP2NmGP44kfkPecllKm_6_igcqhaK3kEU6X-4snOMCVgZ0qPKDC"))
-            {
-                var response = await dbx.Files.UploadAsync(imageName, body:image.OpenReadStream());
-            }
+        {
+            await DropBoxService.UploadImageAsync(image, imageName);
         }
 
     }

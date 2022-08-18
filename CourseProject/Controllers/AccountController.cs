@@ -1,13 +1,7 @@
-﻿using CourseProject.Models;
-using CourseProject.Models.ViewModels;
-using CourseProject.Services;
+﻿using CourseProject.Models.ViewModels;
 using CourseProject.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Security.Claims;
 
 namespace CourseProject.Controllers
 {
@@ -21,10 +15,6 @@ namespace CourseProject.Controllers
             _accountService = accountService;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
         [HttpGet]
         public async Task<IActionResult> Register()
         {
@@ -39,7 +29,7 @@ namespace CourseProject.Controllers
                 var result = await _accountService.RegisterAsync(userVM);
                 if (result?.Succeeded == true)
                 {
-                    return RedirectToAction("Profile", "Profile");
+                    return RedirectToAction("Main", "Profile");
                 }
                 foreach(var error in _accountService.ErrorState.Errors)
                 {
@@ -63,7 +53,7 @@ namespace CourseProject.Controllers
                 var result = await _accountService.AuthorizeAsync(userVM);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Profile", "Profile");
+                    return RedirectToAction("Main", "Profile");
                 }
                 else
                 {
@@ -73,10 +63,5 @@ namespace CourseProject.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

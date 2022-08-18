@@ -9,8 +9,10 @@
 }
 else
 {
-    <a asp-controller="Collection" asp-action="CreateCollection" class="mb-3">Create new collection</a>
-
+    @if(ViewBag.IsOwnerOrAdmin)
+    { 
+        <a asp-controller="Collection" asp-action="CreateCollection" class="mb-3">Create new collection</a>
+    }
     foreach(var collection in @Model)
     {
         <div class="card" style="width: 18rem;">
@@ -22,8 +24,12 @@ else
                 <h5 class="card-title">@collection.Name</h5>
                 <h5 class="card-title">Theme: @collection.Theme</h5>
                 <p class="card-text">@collection.Description</p>
-                <a asp-action="CollectionItems" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-primary">See items</a>
-            </div>
+                <a asp-action="CollectionItems" asp-controller="Item" asp-route-collection="@collection" class="btn btn-primary">See collection items</a>
+                @if(ViewBag.IsOwnerOrAdmin)
+                { 
+                    <a asp-action="DeleteCollection" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-danger">Delete Collection</a>
+                }
+           </div>
         </div>
     }
 }

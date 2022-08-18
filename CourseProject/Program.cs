@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+var connection = builder.Configuration.GetConnectionString("GearHostConnection");
 
 
 
@@ -40,7 +40,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.ConfigureApplicationCookie(config =>
 {
     config.Cookie.Name = "Identity.Cookie";
-    config.LoginPath = "/Account/Register";
+    config.LoginPath = "/Account/Authorize";
 });
 
 var app = builder.Build();
@@ -48,8 +48,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -67,7 +65,7 @@ app.UseMvc(routes =>
 {
     routes.MapRoute(
         name: "default",
-        template: "{controller=Main}/{action=Index}/{id?}");
+        template: "{controller=Profile}/{action=Main}/{id?}");
 });
 
 

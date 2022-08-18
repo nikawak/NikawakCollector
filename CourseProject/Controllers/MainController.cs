@@ -2,7 +2,6 @@
 
 namespace CourseProject.Controllers
 {
-    [Route ("")]
     public class MainController : Controller
     {
         private ISeedData _seedData;
