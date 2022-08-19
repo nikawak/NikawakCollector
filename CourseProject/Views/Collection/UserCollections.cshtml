@@ -23,7 +23,7 @@ else
             <div class="card-body">
                 <h5 class="card-title">@collection.Name</h5>
                 <h5 class="card-title">Theme: @collection.Theme</h5>
-                <p class="card-text">@collection.Description</p>
+                <p class="card-text">@Html.Raw(@collection.Description)</p>
                 <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-primary">See collection items</a>
                 @if(ViewBag.IsOwnerOrAdmin)
                 { 

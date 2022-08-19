@@ -6,6 +6,7 @@ using CourseProject.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CourseProject.Services;
+using Markdig;
 
 namespace CourseProject.Controllers
 {
@@ -44,7 +45,10 @@ namespace CourseProject.Controllers
             }
 
             collections.Reverse();
-
+            foreach(var col in collections)
+            {
+                col.Description = Markdown.ToHtml(col.Description);
+            }
 
             return View(collections);
         }

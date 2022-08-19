@@ -5,7 +5,7 @@ namespace CourseProject.Services
 {
     public static class DropBoxService
     {
-        private static string _accessToken = "sl.BNnQTBzRjOmRnaSvaSii6Ecw7tSHRYAz8pF11lOS8GMd6S3OL0pRZlk7GFzgeDRdybiQiAn1ubutSaIYKvRXa4-ep0rD5O9jkRLkuzwgPQepSGfwo5ojQWISUdrcbD9OLCy9ElJzFq7B";
+        private static string _accessToken = "sl.BNpxDHltEigLTAQoneuv6SoE3LFGLnPdQ2zFhNGHwCVtLrQX5EGXlVcFBxL0MxvkgBqW-JEUQLhO-jJlUvKs5O8mk5mTrp_15hKj3TnHIjKf8vkhfUILN1YkXusQIIRHwQHD_bsuA4rl";
 
         public static async Task UploadImageAsync(IFormFile image, string imageName)
         {
