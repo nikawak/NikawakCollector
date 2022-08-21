@@ -73,19 +73,3 @@ app.UseMvc(routes =>
 
 
 app.Run();
-
-
-/*  <!-- <div class="card-text">
-                   @for(int j = 0; j < properties.Count; j++)
-                    {
-                        <span class="mb-1">@collectionProperties[j].Name: @properties[j].PropertyValue</span>
-                    }
-                    <div class="text-wrap">
-
-                        @foreach(var tag in items[i].Tags)
-                        {
-                            <span>@tag.Name </span>
-                        }
-
-                    </div>
-                </div>-->*/

@@ -22,7 +22,7 @@
                 {
                     <h4>@items[i].Name</h4>
 
-                    <a class="btn btn-primary" asp-action="UserCollections" asp-action="Collection" asp-route-item="@items[i]">Show Item</a>
+                    <a class="btn btn-primary" asp-action="ShowItem" asp-controller="Item" asp-route-itemId="@items[i].Id">Show Item</a>
                 }
             </div>
     </div>

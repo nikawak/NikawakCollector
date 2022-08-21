@@ -1,0 +1,17 @@
+﻿@model Comment
+
+<form asp-action="CreateComment" asp-controller="Item" method="post">
+    <div class="container w-50 text-center mt-5">
+        <h4>Leave the comment</h4>
+
+        <textarea asp-for="Value" class="form-control"></textarea>
+
+        <input hidden asp-for="SenderId" value="@Model.SenderId"/>
+        <input hidden asp-for="ItemId" value="@Model.ItemId"/>
+
+        <div class="row container justify-content-around mt-2">
+            <button class="btn btn-outline-primary col-5">Send</button>
+            <button class="btn btn-outline-danger col-5">Cancel</button>
+        </div>
+    </div>
+</form>

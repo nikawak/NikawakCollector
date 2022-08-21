@@ -1,0 +1,61 @@
+﻿@model Tuple<Item, Collection, string>
+
+@{
+    var item = @Model.Item1;
+    var collection = @Model.Item2;
+    var sender = @Model.Item3;
+
+    <i class="bi bi-suit-heart m-2">@item.Likes.Count</i>
+
+    var properties = @item.Properties;
+
+    <div class="card m-3 text-center bg-light border-secondary">
+        <div>
+            <div class="card-title"><h3>@item.Name</h3></div>
+            <div class="card-text">
+                <div class="text-wrap">
+
+                @for(int j = 0; j < properties.Count; j++)
+                {
+                    <span class="mb-1">@collection.Properties[j].Name: @properties[j].PropertyValue</span>
+                }
+
+
+                @foreach(var tag in item.Tags)
+                {
+                    <span>@tag.Name </span>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_CreateComment.cshtml", new Comment(){ SenderId = sender, ItemId = item.Id})
+
+    <div class="text-center m-5">
+
+        <h4>Comments for @item.Name</h4>
+        
+        @foreach(var comment in item.Comments)
+        {
+            <form method="post" asp-action="DeleteComment" asp-controller="Item" asp-route-commentId="@comment.Id">
+                <div class="border-bottom border-info m-3 border-4 bg-light border-secondary text-center p-2">
+                    <h5 class="mt-1 mb-4">@comment.Sender.UserName</h5>
+                    <div class="row">
+                        <span class="col-9">@comment.Value</span>
+                        @if(ViewBag.IsOwnerOrAdmin)
+                        {                      
+                            <span class="col-1">@comment.CreationDate</span>
+                            <button class="col-2 btn btn-outline-danger p-2" type="submit">Delete</button>
+                        }
+                        else
+                        {
+                            <span class="col-3">@comment.CreationDate</span>
+                        }
+                    </div>
+                </div>
+            </form>
+        }
+        
+    </div>
+}

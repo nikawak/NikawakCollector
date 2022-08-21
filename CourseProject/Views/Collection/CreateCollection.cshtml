@@ -10,8 +10,9 @@
         <form asp-action="CreateCollection" asp-controller="Collection" method="post" enctype="multipart/form-data">
                 
             <div asp-validation-summary="All"></div>
-                <div id="dropzone">
+                <div class="input-group" id="dropzone">
                     <input id="uploader" asp-for="Image" accept="image/png,image/jpeg"/>
+                    <label class="input-group-text">Upload</label>
                 </div>
                 <div class="d-flex flex-column">
                     <label asp-for="Name"></label>

@@ -50,12 +50,24 @@ namespace CourseProject.Services.Repositories
 
         public async Task<IEnumerable<Tag>> GetAllAsync()
         {
-            return await _context.Tags.ToListAsync();
+            return await _context.Tags.Include(i => i.Items).ToListAsync();
         }
 
         public async Task<Tag> GetAsync(Guid id)
         {
-            return await _context.Tags.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Tags.Include(i => i.Items).FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Tag> GetByName(string name)
+        {
+            return await _context.Tags
+                .Include(i => i.Items)
+                    .ThenInclude(p=>p.Properties)
+                .Include(i=>i.Items)
+                    .ThenInclude(l=>l.Likes)
+                .Include(i => i.Items)
+                    .ThenInclude(l => l.Comments)
+                    .FirstOrDefaultAsync(n => n.Name == name);
         }
 
         public async Task<IEnumerable<Tag>> NotExistsAsync(IEnumerable<Tag> enities)

@@ -90,8 +90,57 @@ namespace CourseProject.Controllers
         {
             var item = await _unitOfWork.ItemRepository.GetAsync(itemId);
             var collection = await _unitOfWork.CollectionRepository.GetAsync(item.CollectionId);
+            var userId = await _accountService.GetUserIdAsync(User);
 
-            return View(item);
+            var isOwner = collection.UserId == await _accountService.GetUserIdAsync(User);
+            var isAdmin = User.IsInRole("Admin");
+            ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
+
+            var tuple = new Tuple<Item, Collection, string>(item, collection, userId);
+            return View(tuple);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateComment(Comment comment)
+        {
+            comment.CreationDate = DateTime.Now;
+            await _unitOfWork.CommentRepository.CreateAsync(comment);
+
+            return RedirectToAction("ShowItem", new { comment.ItemId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteComment(Guid commentId)
+        {
+            var comment = await _unitOfWork.CommentRepository.GetAsync(commentId);
+            var itemId = comment.ItemId;
+            await _unitOfWork.CommentRepository.DeleteAsync(comment);
+
+            return RedirectToAction("ShowItem", new { itemId });
+        }
+
+        public async Task<IActionResult> SearchItems(string searchString)
+        {
+            var strings = searchString.Replace("#", "").Split(" ");
+            var tags = await _unitOfWork.TagRepository.GetAllAsync();
+            var tagCount = new Dictionary<Tag, int>();
+
+            foreach (var str in strings)
+            {
+                if (tags.Select(tag => tag.Name.Replace("#", "")).Contains(str))
+                {
+                    var tag = await _unitOfWork.TagRepository.GetByName("#"+str);
+                    tagCount.Add(tag, tag.Items.Count);
+                }
+            }
+
+            var orderedTags = tagCount.OrderByDescending(count => count.Value).Select(x=>x.Key).ToList();
+            var items = new List<Item>();
+
+            foreach(var tag in orderedTags)
+            {
+                items.AddRange(tag.Items);
+            }
+            return View(items);
         }
 
 
