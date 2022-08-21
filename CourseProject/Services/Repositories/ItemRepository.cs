@@ -33,25 +33,28 @@ namespace CourseProject.Services.Repositories
 
         public async Task<IEnumerable<Item>> GetAllAsync()
         {
-            return await _context.Items.Include(t => t.Tags).Include(p => p.Properties).ToListAsync();
+            return await _context.Items
+                .Include(t => t.Tags).Include(p => p.Properties)
+                .Include(l => l.Likes).Include(c => c.Comments)
+                .ToListAsync();
         }
 
         public async Task<Item> GetAsync(Guid id)
         {
-            return await _context.Items.Include(t => t.Tags).Include(p=>p.Properties).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Items
+                .Include(t => t.Tags).Include(p => p.Properties)
+                .Include(l => l.Likes).Include(c => c.Comments)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<Item>> GetByCollectionAsync(Guid collectionId)
         {
-            return await _context.Items.Where(x => x.CollectionId == collectionId).Include(t => t.Tags).Include(p => p.Properties).ToListAsync();
+            return await _context.Items
+                .Where(x => x.CollectionId == collectionId)
+                .Include(t => t.Tags).Include(p => p.Properties)
+                .Include(l => l.Likes).Include(c => c.Comments)
+                .ToListAsync();
         }
 
-        public async Task UpdateAsync(Item entity)
-        {
-            var item = await _context.Items.FirstOrDefaultAsync(x => x.Id == entity.Id);
-            _context.Items.Remove(item);
-            await _context.Items.AddAsync(entity);
-            await _context.SaveChangesAsync();
-        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿@model IEnumerable<Collection>
 
 <div class="container">
-
 @if(@Model.Count() == 0)
 {
     <h3>There is no one collection</h3>
@@ -13,24 +12,30 @@ else
     { 
         <a asp-controller="Collection" asp-action="CreateCollection" class="mb-3">Create new collection</a>
     }
-    foreach(var collection in @Model)
-    {
-        <div class="card" style="width: 18rem;">
+    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
+        @foreach(var collection in @Model)
+        {
+            <div class="card m-2 container-sm">
 
-             <img class="card-img-top" src="@Url.Action("DropImageRead", "Collection" , new {collectionId = collection.Id})"/>
+                <img class="card-img-top img-fluid" src="@Url.Action("MegaImageRead", "Collection" , new {collectionId = collection.Id})"/>
 
 
-            <div class="card-body">
-                <h5 class="card-title">@collection.Name</h5>
-                <h5 class="card-title">Theme: @collection.Theme</h5>
-                <p class="card-text">@Html.Raw(@collection.Description)</p>
-                <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-primary">See collection items</a>
-                @if(ViewBag.IsOwnerOrAdmin)
-                { 
-                    <a asp-action="DeleteCollection" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-danger">Delete Collection</a>
-                }
-           </div>
-        </div>
-    }
+                <div class="card-body text-center">
+                    <h5 class="card-title">@collection.Name</h5>
+                    <h5 class="card-subtitle">Theme: @collection.Theme</h5>
+                    <p class="card-text">@Html.Raw(@collection.Description)</p>
+                    
+                    <div class="row">
+                        <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-primary col m-2">See collection items</a>
+                        @if(ViewBag.IsOwnerOrAdmin)
+                        { 
+                            <a asp-action="DeleteCollection" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-danger col m-2">Delete Collection</a>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
 }
 </div>

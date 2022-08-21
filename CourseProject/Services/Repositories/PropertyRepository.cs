@@ -46,12 +46,5 @@ namespace CourseProject.Services.Repositories
             return await _context.Properties.Where(x => x.ItemId == itemId).ToListAsync();
         }
 
-        public async Task UpdateAsync(Property entity)
-        {
-            var item = await _context.Properties.FirstOrDefaultAsync(x => x.Id == entity.Id);
-            _context.Properties.Remove(item);
-            await _context.Properties.AddAsync(entity);
-            await _context.SaveChangesAsync();
-        }
     }
 }

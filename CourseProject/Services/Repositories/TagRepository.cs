@@ -31,6 +31,23 @@ namespace CourseProject.Services.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<Tag>> ExistsAsync(List<Tag> enities)
+        {
+            var all = await _context.Tags.ToListAsync();
+            var res = new List<Tag>();
+            for (int i = 0; i < all.Count; i++)
+            {
+                for(int j = 0; j<enities.Count(); j++)
+                {
+                    if (all[i].Name.Equals(enities[j].Name))
+                    {
+                        res.Add(all[i]);
+                    }
+                }
+            }
+            return res;
+        }
+
         public async Task<IEnumerable<Tag>> GetAllAsync()
         {
             return await _context.Tags.ToListAsync();
@@ -41,13 +58,18 @@ namespace CourseProject.Services.Repositories
             return await _context.Tags.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-
-        public async Task UpdateAsync(Tag entity)
+        public async Task<IEnumerable<Tag>> NotExistsAsync(IEnumerable<Tag> enities)
         {
-            var item = await _context.Tags.FirstOrDefaultAsync(x => x.Id == entity.Id);
-            _context.Tags.Remove(item);
-            await _context.Tags.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            var all = await _context.Tags.ToListAsync();
+            var res = new List<Tag>();
+            foreach(var entity in enities)
+            {
+                if (!all.Select(x=>x.Name).Contains(entity.Name))
+                {
+                    res.Add(entity);
+                }
+            }
+            return res;
         }
     }
 }

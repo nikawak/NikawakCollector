@@ -17,6 +17,7 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ISeedData, SeedData>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllersWithViews(mvcOtions =>
 {
@@ -46,7 +47,7 @@ builder.Services.ConfigureApplicationCookie(config =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseHsts();
@@ -72,3 +73,19 @@ app.UseMvc(routes =>
 
 
 app.Run();
+
+
+/*  <!-- <div class="card-text">
+                   @for(int j = 0; j < properties.Count; j++)
+                    {
+                        <span class="mb-1">@collectionProperties[j].Name: @properties[j].PropertyValue</span>
+                    }
+                    <div class="text-wrap">
+
+                        @foreach(var tag in items[i].Tags)
+                        {
+                            <span>@tag.Name </span>
+                        }
+
+                    </div>
+                </div>-->*/

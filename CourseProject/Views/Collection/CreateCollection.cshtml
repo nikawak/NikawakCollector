@@ -5,12 +5,14 @@
     var collectionThemes = ViewBag.Theme as IEnumerable<SelectListItem>;
 }
 
-<div class="container box-shadow w-75">
+<div class="container m-auto box-shadow">
     <div class="align-content-center align-self-center">
         <form asp-action="CreateCollection" asp-controller="Collection" method="post" enctype="multipart/form-data">
                 
             <div asp-validation-summary="All"></div>
-                <input asp-for="Image" accept="image/png,image/jpeg"/>
+                <div id="dropzone">
+                    <input id="uploader" asp-for="Image" accept="image/png,image/jpeg"/>
+                </div>
                 <div class="d-flex flex-column">
                     <label asp-for="Name"></label>
                     <input asp-for="Name" class="form-control" placeholder="Input Collection name"/>
@@ -30,7 +32,7 @@
                 <label class="mt-4 mb-3 flex-lg-wrap">You can add properties (inputs) to each item of this collection</label>
                 <br/><label asp-for="PropertyType"></label>
 
-                <div class="input-group w-100">
+                <div class="input-group w-100 align-self-center">
 
                     <select class="custom-select" id="propertySelect" asp-for="PropertyType" asp-items="propertyTypes">
                     </select>
@@ -46,3 +48,4 @@
         </form>
     </div>
 </div>
+

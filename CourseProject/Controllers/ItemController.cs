@@ -8,21 +8,13 @@ namespace CourseProject.Controllers
 {
     public class ItemController : Controller
     {
-        private ITagRepository _tagRepository;
         private IAccountService _accountService;
-        private ICollectionRepository _collectionRepository;
-        private ICollectionPropertyRepository _collectionPropertyRepository;
-        private IItemRepository _itemRepository;
-        private IPropertyRepository _propertyRepository;
+        private IUnitOfWork _unitOfWork;
 
-        public ItemController(IAccountService accountService, ITagRepository tagRepository, ICollectionRepository collectionRepository, ICollectionPropertyRepository collectionPropertyRepository, IItemRepository itemRepository, IPropertyRepository propertyRepository)
+        public ItemController(IAccountService accountService, IUnitOfWork unitOfWork)
         {
-            _tagRepository = tagRepository;
             _accountService = accountService;
-            _collectionRepository = collectionRepository;
-            _collectionPropertyRepository = collectionPropertyRepository;
-            _itemRepository = itemRepository;
-            _propertyRepository = propertyRepository;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -30,8 +22,8 @@ namespace CourseProject.Controllers
         public async Task<IActionResult> CreateItem(Guid collectionId)
         {
 
-            var collection = await _collectionRepository.GetAsync(collectionId);
-            var properties = await _collectionPropertyRepository.GetByCollectionAsync(collectionId);
+            var collection = await _unitOfWork.CollectionRepository.GetAsync(collectionId);
+            var properties = await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(collectionId);
 
 
             ViewBag.Collection = collection;
@@ -44,17 +36,21 @@ namespace CourseProject.Controllers
         public async Task<IActionResult> CreateItem(CreateItemViewModel model, string[] values)
         {
             var tags = ValidTags(model.Tags);
-            await _tagRepository.CreateRangeAsync(tags);
+            var existsTags = await _unitOfWork.TagRepository.ExistsAsync(tags.ToList());
+            var notExistsTags = await _unitOfWork.TagRepository.NotExistsAsync(tags);
+
+            await _unitOfWork.TagRepository.CreateRangeAsync(notExistsTags);
 
             var item = new Item()
             {
                 Name = model.Name,
                 CollectionId = model.CollectionId,
-                Tags = tags.ToList()
+                CreatingDate = DateTime.Now,
+                Tags = existsTags.Concat(notExistsTags).ToList()
             };
-            await _itemRepository.CreateAsync(item);
+            await _unitOfWork.ItemRepository.CreateAsync(item);
 
-            var collectionPropertiesAsync = await _collectionPropertyRepository.GetByCollectionAsync(model.CollectionId);
+            var collectionPropertiesAsync = await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(model.CollectionId);
             var collectionProperties = collectionPropertiesAsync.ToArray();
             var properties = new List<Property>();
 
@@ -69,7 +65,7 @@ namespace CourseProject.Controllers
                 properties.Add(property);
             }
 
-            await _propertyRepository.CreateRangeAsync(properties);
+            await _unitOfWork.PropertyRepository.CreateRangeAsync(properties);
 
             return RedirectToAction("UserCollections", "Collection");
         }
@@ -78,8 +74,8 @@ namespace CourseProject.Controllers
 
         public async Task<IActionResult> CollectionItems(Guid collectionId)
         {
-            var items = await _itemRepository.GetByCollectionAsync(collectionId);
-            var collection = await _collectionRepository.GetAsync(collectionId);
+            var items = await _unitOfWork.ItemRepository.GetByCollectionAsync(collectionId);
+            var collection = await _unitOfWork.CollectionRepository.GetAsync(collectionId);
 
             var tuple = new Tuple<List<Item>, Collection>(items.ToList(), collection);
 
@@ -92,10 +88,8 @@ namespace CourseProject.Controllers
 
         public async Task<IActionResult> ShowItem(Guid itemId)
         {
-            var item = await _itemRepository.GetAsync(itemId);
-            var collection = await _collectionRepository.GetAsync(item.CollectionId);
-
-            
+            var item = await _unitOfWork.ItemRepository.GetAsync(itemId);
+            var collection = await _unitOfWork.CollectionRepository.GetAsync(item.CollectionId);
 
             return View(item);
         }

@@ -14,29 +14,24 @@ namespace CourseProject.Controllers
     public class CollectionController : Controller
     {
         private IAccountService _accountService;
-        private ICollectionRepository _collectionRepository;
-        private ICollectionPropertyRepository _collectionPropertyRepository;
-        private IItemRepository _itemRepository;
-        private IPropertyRepository _propertyRepository;
+        private IUnitOfWork _unitOfWork;
 
-        public CollectionController(IAccountService accountService, ICollectionRepository collectionRepository, ICollectionPropertyRepository collectionPropertyRepository, IItemRepository itemRepository,  IPropertyRepository propertyRepository)
+        public CollectionController(IAccountService accountService, IUnitOfWork unitOfWork)
         {
             _accountService = accountService;
-            _collectionRepository = collectionRepository;
-            _collectionPropertyRepository = collectionPropertyRepository;
-            _itemRepository = itemRepository;
-            _propertyRepository = propertyRepository;
+            _unitOfWork = unitOfWork;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> UserCollections(string? userId = null)
         {
+            
             if(userId == null)
             {
                 userId = await _accountService.GetUserIdAsync(User);
             }
-            var collections = (await _collectionRepository.GetByUserAsync(userId)).ToList();
+            var collections = (await _unitOfWork.CollectionRepository.GetByUserAsync(userId)).ToList();
             if (collections != null && collections[0] != null)
             {
                 var isOwner = collections[0].UserId == await _accountService.GetUserIdAsync(User);
@@ -66,8 +61,12 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCollection(CreateCollectionViewModel model, string[] propertyNames, string[] propertyTypes)
         {
-            var imageName = "/" + DateTime.Now.ToString().Replace(".","-") + model.Image.FileName;
-            await DropImageWrite(model.Image, imageName);
+            var imageName = DateTime.Now.ToString().Replace(".","-") + model.Image.FileName;
+            var split = model.Image.FileName.Split(".");
+            var mime = "image/" + split[split.Length - 1];
+            
+            var path = await MegaImageWrite(model.Image, imageName);
+
             var userId = await _accountService.GetUserIdAsync(User);
             var collection = new Collection()
             {
@@ -75,9 +74,10 @@ namespace CourseProject.Controllers
                 Description = model.Description,
                 Theme = model.Theme,
                 UserId = userId,
-                ImagePath = imageName
+                ImagePath = path,
+                ImageMime = mime
             };
-            await _collectionRepository.CreateAsync(collection);
+            await _unitOfWork.CollectionRepository.CreateAsync(collection);
 
 
             List<CollectionProperty> properties = new();
@@ -94,38 +94,38 @@ namespace CourseProject.Controllers
                 };
                 properties.Add(collectionProperty);
             }
-            await _collectionPropertyRepository.CreateRangeAsync(properties);
+            await _unitOfWork.CollectionPropertyRepository.CreateRangeAsync(properties);
 
             return RedirectToAction("UserCollections", "Collection");
         }
 
         public async Task<IActionResult> DeleteCollection(Guid collectionId)
         {
-            var collection = await _collectionRepository.GetAsync(collectionId);
-            var items = await _itemRepository.GetByCollectionAsync(collection.Id);
+            var collection = await _unitOfWork.CollectionRepository.GetAsync(collectionId);
+            var items = await _unitOfWork.ItemRepository.GetByCollectionAsync(collection.Id);
 
-            await _itemRepository.DeleteRangeAsync(items);
+            await _unitOfWork.ItemRepository.DeleteRangeAsync(items);
             
-            await _collectionRepository.DeleteAsync(collection);
+            await _unitOfWork.CollectionRepository.DeleteAsync(collection);
 
             return RedirectToAction("UserCollections","Collection");
         }
 
 
-        public async Task<FileContentResult> DropImageRead(Guid collectionId)
+
+
+        public async Task<FileContentResult> MegaImageRead(Guid collectionId)
         {
-            var collection = await _collectionRepository.GetAsync(collectionId);
-            string imageName = collection.ImagePath;
+            var collection = await _unitOfWork.CollectionRepository.GetAsync(collectionId);
 
-            var split = imageName.Split(".");
-            string mimeType = "image/" + split[split.Length-1];
-
-            var bytes = await DropBoxService.ReadImageAsync(imageName);
-            return File(bytes, mimeType);
+            var bytes = await MegaService.ReadImageAsync(collection.ImagePath);
+            return File(bytes, collection.ImageMime);
         }
-        public async Task DropImageWrite(IFormFile image, string imageName)
+
+
+        public async Task<string> MegaImageWrite(IFormFile image, string imageName)
         {
-            await DropBoxService.UploadImageAsync(image, imageName);
+            return await MegaService.UploadImageAsync(image, imageName);
         }
 
     }

@@ -8,30 +8,23 @@ namespace CourseProject.Controllers
 {
     public class ProfileController : Controller
     {
-        private IAccountService _accountService;
-        private ICollectionRepository _collectionRepository;
-        private ICollectionPropertyRepository _collectionPropertyRepository;
-        private IItemRepository _itemRepository;
-        private IPropertyRepository _propertyRepository;
+        private IUnitOfWork _unitOfWork;
 
-        public ProfileController(IAccountService accountService, ICollectionRepository collectionRepository, ICollectionPropertyRepository collectionPropertyRepository, IItemRepository itemRepository, IPropertyRepository propertyRepository)
+        public ProfileController(IUnitOfWork unitOfWork)
         {
-            _accountService = accountService;
-            _collectionRepository = collectionRepository;
-            _collectionPropertyRepository = collectionPropertyRepository;
-            _itemRepository = itemRepository;
-            _propertyRepository = propertyRepository;
+            _unitOfWork = unitOfWork;
         }
+
         [Route("")]
         public async Task<IActionResult> Main()
         {
-            var collections = await _collectionRepository.GetAllAsync();
-            var biggestCollections = collections.OrderByDescending(x => x.CollectionItems.Count);
+            var collections = await _unitOfWork.CollectionRepository.GetAllAsync();
+            var biggestCollections = collections.OrderByDescending(x => x.CollectionItems.Count).ToList();
 
-            var items = await _itemRepository.GetAllAsync();
-            var lastestItems = items.OrderByDescending(x => x.CreatingDate);
+            var items = await _unitOfWork.ItemRepository.GetAllAsync();
+            var lastestItems = items.OrderByDescending(x => x.CreatingDate).ToList();
 
-            var tuple = new Tuple<List<Collection>, List<Item>>(biggestCollections.ToList(), lastestItems.ToList());
+            var tuple = new Tuple<List<Collection>, List<Item>>(biggestCollections, lastestItems);
             return View(tuple);
         }
     }
