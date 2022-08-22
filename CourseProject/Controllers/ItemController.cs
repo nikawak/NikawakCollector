@@ -39,7 +39,8 @@ namespace CourseProject.Controllers
             var existsTags = await _unitOfWork.TagRepository.ExistsAsync(tags.ToList());
             var notExistsTags = await _unitOfWork.TagRepository.NotExistsAsync(tags);
 
-            await _unitOfWork.TagRepository.CreateRangeAsync(notExistsTags);
+            if(notExistsTags != null)
+                await _unitOfWork.TagRepository.CreateRangeAsync(notExistsTags);
 
             var item = new Item()
             {
@@ -67,7 +68,17 @@ namespace CourseProject.Controllers
 
             await _unitOfWork.PropertyRepository.CreateRangeAsync(properties);
 
-            return RedirectToAction("UserCollections", "Collection");
+            return RedirectToAction("CollectionItems", new { item.CollectionId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteItem(Guid itemId)
+        {
+            var item = await _unitOfWork.ItemRepository.GetAsync(itemId);
+            var collectionId = item.CollectionId;
+            await _unitOfWork.ItemRepository.DeleteAsync(item);
+
+            return RedirectToAction("Collectionitems", new { collectionId });
         }
 
 
@@ -171,6 +182,7 @@ namespace CourseProject.Controllers
 
         public IEnumerable<Tag> ValidTags(string tagsString)
         {
+            if (string.IsNullOrEmpty(tagsString)) yield return null;
             var tags = tagsString.Split(" ");
             var regex = new Regex(@"^#[A-Za-zА-Яа-я_0-9]");
             foreach (var tag in tags)

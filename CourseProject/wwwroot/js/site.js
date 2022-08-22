@@ -44,6 +44,7 @@ $(document).on("click", "[type='checkbox']", function (e) {
         $('#checkHidden').attr("value", "false");}
 });
 
+/*
 window.document.onload(function () {
     alert("true")
 
@@ -57,4 +58,4 @@ else {
     $('#changableLike').removeClass('bi-suit-heart-fill');
 }
 
-    }))
+    }))*/

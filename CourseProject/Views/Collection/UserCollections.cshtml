@@ -12,7 +12,7 @@ else
     { 
         <a asp-controller="Collection" asp-action="CreateCollection" class="mb-3">Create new collection</a>
     }
-    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
+    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 justify-content-around">
         @foreach(var collection in @Model)
         {
             <div class="card m-2 container-sm">
@@ -23,7 +23,7 @@ else
                 <div class="card-body text-center">
                     <h5 class="card-title">@collection.Name</h5>
                     <h5 class="card-subtitle">Theme: @collection.Theme</h5>
-                    <p class="card-text">@Html.Raw(@collection.Description)</p>
+                    <p class="card-text">@Html.Raw(collection.Description)</p>
                     
                     <div class="row">
                         <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-primary col m-2">See collection items</a>

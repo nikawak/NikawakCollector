@@ -31,10 +31,10 @@ namespace CourseProject.Controllers
             {
                 userId = await _accountService.GetUserIdAsync(User);
             }
-            var collections = (await _unitOfWork.CollectionRepository.GetByUserAsync(userId)).ToList();
-            if (collections != null && collections[0] != null)
+            var collections = (await _unitOfWork.CollectionRepository.GetByUserAsync(userId));
+            if (collections != null && collections.Any())
             {
-                var isOwner = collections[0].UserId == await _accountService.GetUserIdAsync(User);
+                var isOwner = collections.ToList()[0].UserId == await _accountService.GetUserIdAsync(User);
                 var isAdmin = User.IsInRole("Admin");
                 ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
             }
@@ -61,12 +61,17 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCollection(CreateCollectionViewModel model, string[] propertyNames, string[] propertyTypes)
         {
-            var imageName = DateTime.Now.ToString().Replace(".","-") + model.Image.FileName;
-            var split = model.Image.FileName.Split(".");
-            var mime = "image/" + split[split.Length - 1];
-            
-            var path = await MegaImageWrite(model.Image, imageName);
+            string mime = "";
+            string path = "";
 
+            if (model.Image != null)
+            {
+                var imageName = DateTime.Now.ToString().Replace(".", "-") + model.Image.FileName;
+                var split = model.Image.FileName.Split(".");
+                mime = "image/" + split[split.Length - 1];
+
+                path = await MegaImageWrite(model.Image, imageName);
+            }
             var userId = await _accountService.GetUserIdAsync(User);
             var collection = new Collection()
             {

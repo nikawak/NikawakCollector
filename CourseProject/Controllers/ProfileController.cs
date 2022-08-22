@@ -1,6 +1,7 @@
 ﻿using CourseProject.Models;
 using CourseProject.Services;
 using CourseProject.Services.Interfaces;
+using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace CourseProject.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+       
 
         [Route("")]
         public async Task<IActionResult> Main()
@@ -23,6 +25,10 @@ namespace CourseProject.Controllers
 
             var items = await _unitOfWork.ItemRepository.GetAllAsync();
             var lastestItems = items.OrderByDescending(x => x.CreatingDate).ToList();
+            foreach (var col in collections)
+            {
+                col.Description = Markdown.ToHtml(col.Description);
+            }
 
             var tuple = new Tuple<List<Collection>, List<Item>>(biggestCollections, lastestItems);
             return View(tuple);
