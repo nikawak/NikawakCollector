@@ -7,10 +7,10 @@
     <div class="text-center">
     @if(collections.Count >= count && items.Count >= count){
         <h3>Biggest collections</h3>
-            <div class="row row-cols-xs-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 container d-flex justify-content-center">
+            <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 container d-flex justify-content-center">
                 @foreach(var collection in collections.Take(count))
                 {
-                    <div class="card col mb-4 container">
+                    <div class="card mb-4 container">
 
                         <img class="card-img-top img-fluid" src="@Url.Action("MegaImageRead", "Collection" , new {collectionId = collection.Id})"/>
 

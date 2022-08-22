@@ -44,6 +44,7 @@ namespace CourseProject.Services.Repositories
             return await _context.Items
                 .Include(t => t.Tags).Include(p => p.Properties)
                 .Include(l => l.Likes).Include(c => c.Comments)
+                    .ThenInclude(u=>u.Sender)
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
