@@ -1,11 +1,12 @@
 ﻿@model Tuple<Item, Collection, string>
 
+@await Html.PartialAsync("_ChangeLike.cshtml", @Model.Item1, ViewData)
+
 @{
     var item = @Model.Item1;
     var collection = @Model.Item2;
     var sender = @Model.Item3;
 
-    <i class="bi bi-suit-heart m-2">@item.Likes.Count</i>
 
     var properties = @item.Properties;
 

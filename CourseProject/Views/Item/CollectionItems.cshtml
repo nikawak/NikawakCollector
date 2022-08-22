@@ -44,6 +44,9 @@
                         <i class="bi bi-suit-heart m-2">@items[i].Likes.Count</i>
                         <i class="bi bi-chat-left-dots m-2">@items[i].Comments.Count</i>
                     </div>
+                    <form asp-action="ShowItem" asp-controller="Item" asp-route-itemId="@items[i].Id">
+                        <div class="card-footer"><button type="submit" class="btn btn-outline-primary">See more</button></div>
+                    </form>
                 </div>
             }
         </div>

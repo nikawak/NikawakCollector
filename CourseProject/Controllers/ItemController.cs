@@ -46,12 +46,12 @@ namespace CourseProject.Controllers
                 Name = model.Name,
                 CollectionId = model.CollectionId,
                 CreatingDate = DateTime.Now,
+                IsPrivate = model.IsPrivate,
                 Tags = existsTags.Concat(notExistsTags).ToList()
             };
             await _unitOfWork.ItemRepository.CreateAsync(item);
 
-            var collectionPropertiesAsync = await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(model.CollectionId);
-            var collectionProperties = collectionPropertiesAsync.ToArray();
+            var collectionProperties = (await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(model.CollectionId)).ToArray();
             var properties = new List<Property>();
 
             for (int i = 0; i < values.Length; i++)
@@ -92,11 +92,14 @@ namespace CourseProject.Controllers
             var collection = await _unitOfWork.CollectionRepository.GetAsync(item.CollectionId);
             var userId = await _accountService.GetUserIdAsync(User);
 
-            var isOwner = collection.UserId == await _accountService.GetUserIdAsync(User);
+            var isOwner = collection.UserId == userId;
             var isAdmin = User.IsInRole("Admin");
             ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
 
-            var tuple = new Tuple<Item, Collection, string>(item, collection, userId);
+            var like = await _unitOfWork.LikeRepository.GetByUserAndItem(userId, itemId);
+            ViewData["IsLiked"] = like != null;
+
+                var tuple = new Tuple<Item, Collection, string>(item, collection, userId);
             return View(tuple);
         }
 
@@ -114,6 +117,28 @@ namespace CourseProject.Controllers
             var comment = await _unitOfWork.CommentRepository.GetAsync(commentId);
             var itemId = comment.ItemId;
             await _unitOfWork.CommentRepository.DeleteAsync(comment);
+
+            return RedirectToAction("ShowItem", new { itemId });
+        }
+
+        public async Task<IActionResult> ChangeLike(Guid itemId)
+        {
+            var userId = await _accountService.GetUserIdAsync(User);
+            var like = await _unitOfWork.LikeRepository.GetByUserAndItem(userId, itemId);
+            if (like == null)
+            {
+                like = new Like()
+                {
+                    ItemId = itemId,
+                    SenderId = userId,
+                };
+                await _unitOfWork.LikeRepository.CreateAsync(like);
+            }
+            else
+            {
+                await _unitOfWork.LikeRepository.DeleteAsync(like);
+            }
+
 
             return RedirectToAction("ShowItem", new { itemId });
         }

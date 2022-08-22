@@ -1,0 +1,11 @@
+﻿@model Item
+
+<form asp-action="ChangeLike" asp-controller="Item" method="post" asp-route-itemId="@Model.Id">
+    <button class="btn btn-danger" id="btnLike">
+        <i id="changableLike" style="color:whitesmoke" class="bi bi-suit-heart m-2">@Model.Likes.Count</i>
+    </button>
+    @{
+        var value = @ViewData["IsLiked"];
+    }
+    <input id="IsLiked" value="@value" hidden/>
+</form>

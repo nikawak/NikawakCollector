@@ -18,33 +18,38 @@
                     <label>Example: #coin #rare #game</label>
                 </div>
 
+                <div class="d-flex flex-column">
+                    <div class="d-flex flex-row">
+                        <label asp-for="IsPrivate" class="form-check-label"></label>
+                        <input asp-for="IsPrivate" class="form-check-input mx-2"/>
+                    </div>
+                    <label>If true no one can see item except you</label>
+                </div>
+
                 <input asp-for="CollectionId" value="@ViewBag.Collection.Id" hidden/>
                 
             @{
                 foreach(CollectionProperty property in @ViewBag.Properties)
                 {
                         <label>@property.Name</label>
-
-                    @if(@property.Type == PropertyType.Number_Input)
+                    @switch (property.Type)
                     {
-                        <input class="form-control" name="values" type="number"/>
-                    }
-                    @if(@property.Type == PropertyType.Date_Input)
-                    {
-                        <input class="form-control" name="values" type="date"/>
-                    }
-                    @if(@property.Type == PropertyType.Check_Box)
-                    {
-                           <input id="checkHidden" hidden name="values" value="false"/>
-                        <input type="checkbox" id="checkInput" value="false"/>
-                    }
-                    @if(@property.Type == PropertyType.Text_Input)
-                    {
-                        <input class="form-control" name="values" type="text"/>
-                    }
-                    @if(@property.Type == PropertyType.Text_Area)
-                    {
-                        <textarea class="form-control" maxlength="512" name="values"></textarea>
+                        case PropertyType.Number_Input:
+                            <input class="form-control" name="values" type="number"/>
+                        break;
+                        case PropertyType.Date_Input:
+                            <input class="form-control" name="values" type="date"/>
+                        break;
+                        case PropertyType.Check_Box:
+                            <input id="checkHidden" hidden name="values" value="false"/>
+                            <input type="checkbox" id="checkInput" value="false"/>
+                        break;
+                        case PropertyType.Text_Input:
+                            <input class="form-control" name="values" type="text"/>
+                        break;
+                        case PropertyType.Text_Area:
+                            <textarea class="form-control" maxlength="512" name="values"></textarea>
+                        break;
                     }
                 }
             }

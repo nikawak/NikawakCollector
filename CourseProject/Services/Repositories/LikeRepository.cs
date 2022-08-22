@@ -34,5 +34,10 @@ namespace CourseProject.Services.Repositories
         {
             return await _context.Likes.FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public async Task<Like?> GetByUserAndItem(string userId, Guid itemId)
+        {
+            return await _context.Likes.FirstOrDefaultAsync(x => x.SenderId == userId && x.ItemId == itemId);
+        }
     }
 }

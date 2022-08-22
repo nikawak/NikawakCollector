@@ -4,6 +4,6 @@ namespace CourseProject.Services.Interfaces
 {
     public interface ILikeRepository : IBaseRepository<Like>
     {
-
+        Task<Like?> GetByUserAndItem(string userId, Guid itemId); 
     }
 }

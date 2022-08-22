@@ -43,3 +43,18 @@ $(document).on("click", "[type='checkbox']", function (e) {
     } else {
         $('#checkHidden').attr("value", "false");}
 });
+
+window.document.onload(function () {
+    alert("true")
+
+if ($('#IsLiked').attr("value", "true")) {
+    
+    $('#changableLike').removeClass('bi-suit-heart');
+    $('#changableLike').addClass('bi-suit-heart-fill');
+}
+else {
+    $('#changableLike').addClass('bi-suit-heart');
+    $('#changableLike').removeClass('bi-suit-heart-fill');
+}
+
+    }))
