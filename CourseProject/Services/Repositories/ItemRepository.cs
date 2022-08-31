@@ -56,6 +56,10 @@ namespace CourseProject.Services.Repositories
                 .Include(l => l.Likes).Include(c => c.Comments)
                 .ToListAsync();
         }
-
+        public async Task UpdateAsync(Item entity)
+        {
+            await Task.CompletedTask;
+            _context.Items.Update(entity);
+        }
     }
 }

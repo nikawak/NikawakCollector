@@ -4,14 +4,12 @@ namespace CourseProject.Services
 {
     public static class MegaService
     {
-        private static string _megaKey = "ViwcvMyGCL88pOyBC8ZGFg";
-        private static string _megaLogin = "nikawak228@gmail.com";
-        private static string _megaPassword = "jrioQF57RUFwZHNtzq5QNfEcg8yfui";
+        //private static string _megaKey = "ViwcvMyGCL88pOyBC8ZGFg";
 
-        public static async Task<string> UploadImageAsync(IFormFile image, string imageName)
+        public static async Task<string> UploadImageAsync(IFormFile image, string imageName, IConfiguration configuration)
         {
             MegaApiClient client = new MegaApiClient();
-            client.Login(_megaLogin, _megaPassword);
+            client.Login(configuration["MegaService:MegaLogin"], configuration["MegaService:MegaPassword"]);
 
             IEnumerable<INode> nodes = client.GetNodes();
 

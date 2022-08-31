@@ -30,7 +30,8 @@ namespace CourseProject.Controllers
                 col.Description = Markdown.ToHtml(col.Description);
             }
 
-            var tuple = new Tuple<List<Collection>, List<Item>>(biggestCollections, lastestItems);
+            var tags = (await _unitOfWork.TagRepository.GetAllAsync()).Where(x=>x.Items.Count > 0).ToList();
+            var tuple = new Tuple<List<Collection>, List<Item>, List<Tag>>(biggestCollections, lastestItems, tags);
             return View(tuple);
         }
     }

@@ -83,5 +83,10 @@ namespace CourseProject.Services.Repositories
             }
             return res;
         }
+        public async Task UpdateAsync(Tag entity)
+        {
+            await Task.CompletedTask;
+            _context.Tags.Update(entity);
+        }
     }
 }

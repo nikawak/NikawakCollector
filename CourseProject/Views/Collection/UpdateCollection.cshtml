@@ -1,14 +1,14 @@
 ﻿@model CollectionViewModel
 
 @{
-    var propertyTypes = ViewBag.PropertyType as IEnumerable<SelectListItem>;
     var collectionThemes = ViewBag.Theme as IEnumerable<SelectListItem>;
 }
 
 <div class="container shadow-lg bg-white rounded-3 col-lg-6 col-md-8">
     <div class="p-2 px-4">
-        <form asp-action="CreateCollection" asp-controller="Collection" method="post" enctype="multipart/form-data">
-                
+        <form asp-action="UpdateCollection" asp-controller="Collection" method="post" enctype="multipart/form-data">
+                <input hidden asp-for="Id" value="@Model.Id"/>
+
             <div asp-validation-summary="All"></div>
                 <div class="input-group m-2" id="dropzone">
                     <input id="uploader" asp-for="Image" accept="image/png,image/jpeg"/>
@@ -30,22 +30,10 @@
                     <select class="custom-select" asp-for="Theme" asp-items="collectionThemes"></select>
                 </div>
 
-                <label class="mt-4 mb-3 flex-lg-wrap">You can add properties (inputs) to each item of this collection</label>
-                <br/><label asp-for="PropertyType"></label>
-
-                <div class="input-group w-100 align-self-center">
-
-                    <select class="custom-select m-2" id="propertySelect" asp-for="PropertyType" asp-items="propertyTypes">
-                    </select>
-
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" onclick="AddElement()" type="button">Button</button>
-                    </div>
-
-                    
+                <div class="row my-4 mx-2">
+                    <button type="submit" class="btn btn-outline-primary col mx-2">Submit</button>
+                    <a asp-action="UserCollections" asp-controller="Collection" class="btn btn-outline-danger col mx-2">Cancel</a>
                 </div>
-                <div id="inputBlock"></div>
-                <button type="submit" class="btn btn-outline-primary btn-block w-100 mt-4 mb-4">Submit</button>
         </form>
     </div>
 </div>

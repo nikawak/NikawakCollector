@@ -6,5 +6,6 @@
         Task DeleteAsync(T entity);
         Task<T> GetAsync(Guid id);
         Task<IEnumerable<T>> GetAllAsync();
+        Task UpdateAsync(T collection);
     }
 }

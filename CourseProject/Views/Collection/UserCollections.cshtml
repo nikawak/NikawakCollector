@@ -15,7 +15,7 @@ else
     <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 justify-content-around">
         @foreach(var collection in @Model)
         {
-            <div class="card m-2 container-sm">
+            <div class="card m-2 container-sm shadow-lg">
 
                 <img class="card-img-top img-fluid" src="@Url.Action("MegaImageRead", "Collection" , new {collectionId = collection.Id})"/>
 
@@ -25,11 +25,13 @@ else
                     <h5 class="card-subtitle">Theme: @collection.Theme</h5>
                     <p class="card-text">@Html.Raw(collection.Description)</p>
                     
-                    <div class="row">
-                        <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-primary col m-2">See collection items</a>
+                    <div class="row align-self-end">
+                        <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-outline-primary col m-2">Show</a>
                         @if(ViewBag.IsOwnerOrAdmin)
                         { 
-                            <a asp-action="DeleteCollection" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-danger col m-2">Delete Collection</a>
+                            <a asp-action="UpdateCollection" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-outline-info col m-2">Update</a>
+                       
+                            <a asp-action="DeleteCollection" asp-controller="Collection" asp-route-collectionId="@collection.Id" class="btn btn-outline-danger col m-2">Delete</a>
                         }
                     </div>
                 </div>

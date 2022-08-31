@@ -25,7 +25,7 @@
             {
                 var properties = items[i].Properties;
 
-                <div class="card m-3 col text-center bg-light border-secondary">
+                <div class="card m-3 mt-3 col text-center bg-white shadow">
                     <div>
                         <div class="card-title"><h3>@items[i].Name</h3></div>
                         <div class="card-text">
@@ -46,11 +46,11 @@
                     </div>
                     <div class="card-footer row">
                         <form asp-action="ShowItem" asp-controller="Item" asp-route-itemId="@items[i].Id">
-                            <div class="col"><button type="submit" class="btn btn-outline-primary">See more</button></div>
+                            <button type="submit" class="btn btn-outline-primary col m-2">See more</button>
                             @if (ViewBag.IsOwnerOrAdmin)
                             {
-                                <div class="col"><button type="submit" asp-action="ShowItem" asp-controller="Item"
-                                    asp-route-itemId="@items[i].Id"class="btn btn-outline-danger">Delete</button></div>
+                               <button type="submit" asp-action="ShowItem" asp-controller="Item"
+                                    asp-route-itemId="@items[i].Id"class="col btn btn-outline-danger col m-2">Delete</button>
                             }
                         </form>
                     </div>

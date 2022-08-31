@@ -40,5 +40,10 @@ namespace CourseProject.Services.Repositories
             return await _context.Collections.Include(i => i.CollectionItems).Include(p => p.Properties).Where(x => x.UserId == userId).ToListAsync();
         }
 
+        public async Task UpdateAsync(Collection entity)
+        {
+            _context.Collections.Update(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -3,8 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CourseProject.Models.ViewModels
 {
-    public class CreateCollectionViewModel
+    public class CollectionViewModel
     {
+        public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

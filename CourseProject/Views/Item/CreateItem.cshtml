@@ -1,24 +1,24 @@
 ﻿@model CreateItemViewModel
 
 
-<div class="container card border-primary box-shadow w-75">
-    <div class="align-content-center align-self-center">
+<div class="container shadow-lg bg-white rounded-3 col-lg-6 col-md-8">
+    <div class="p-2 px-4">
         <form asp-action="CreateItem" asp-controller="Item" method="post">
                 
             <div asp-validation-summary="All"></div>
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column m-2">
                     <label asp-for="Name"></label>
                     <input asp-for="Name" class="form-control" placeholder="Input item name"/>
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column m-2">
                     <label asp-for="Tags"></label>
                     <input asp-for="Tags" class="form-control" placeholder="Input item tags"/>
                     <label>Example: #coin #rare #game</label>
                 </div>
 
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column m-2">
                     <div class="d-flex flex-row">
                         <label asp-for="IsPrivate" class="form-check-label"></label>
                         <input asp-for="IsPrivate" class="form-check-input mx-2"/>
@@ -35,20 +35,20 @@
                     @switch (property.Type)
                     {
                         case PropertyType.Number_Input:
-                            <input class="form-control" name="values" type="number"/>
+                            <input class="form-control m-2" name="values" type="number"/>
                         break;
                         case PropertyType.Date_Input:
-                            <input class="form-control" name="values" type="date"/>
+                            <input class="form-control m-2" name="values" type="date"/>
                         break;
                         case PropertyType.Check_Box:
                             <input id="checkHidden" hidden name="values" value="false"/>
-                            <input type="checkbox" id="checkInput" value="false"/>
+                            <input type="checkbox" class="form-check mx-2" id="checkInput" value="false"/>
                         break;
                         case PropertyType.Text_Input:
-                            <input class="form-control" name="values" type="text"/>
+                            <input class="form-control m-2" name="values" type="text"/>
                         break;
                         case PropertyType.Text_Area:
-                            <textarea class="form-control" maxlength="512" name="values"></textarea>
+                            <textarea class="form-control m-2" maxlength="512" name="values"></textarea>
                         break;
                     }
                 }
@@ -59,8 +59,3 @@
         </form>
     </div>
 </div>
-
-
-@section Scripts{
-   
-}

@@ -10,15 +10,15 @@
 
     var properties = @item.Properties;
 
-    <div class="card m-3 text-center bg-light border-secondary">
+    <div class="card m-3 text-center bg-white shadow">
         <div>
             <div class="card-title"><h3>@item.Name</h3></div>
-            <div class="card-text">
+            <div class="card-text text-center">
                 <div class="text-wrap">
 
                 @for(int j = 0; j < properties.Count; j++)
                 {
-                    <span class="mb-1">@collection.Properties[j].Name: @properties[j].PropertyValue</span>
+                    <span class="mb-1">@collection.Properties[j].Name: @properties[j].PropertyValue</span><br class="m-0"/>
                 }
 
 
@@ -40,14 +40,14 @@
         @foreach(var comment in item.Comments)
         {
             <form method="post" asp-action="DeleteComment" asp-controller="Item" asp-route-commentId="@comment.Id">
-                <div class="border-bottom border-info m-3 border-4 bg-light border-secondary text-center p-2">
+                <div class="border-bottom border-info m-3 border-4 rounded-3 bg-white shadow-lg border-secondary text-center p-2">
                     <h5 class="mt-1 mb-4">@comment.Sender.UserName</h5>
                     <div class="row">
-                        <span class="col-9">@comment.Value</span>
+                        <span class="col-9 justify-content-around">@comment.Value</span>
                         @if(ViewBag.IsOwnerOrAdmin)
                         {                      
-                            <span class="col-1">@comment.CreationDate</span>
-                            <button class="col-2 btn btn-outline-danger p-2" type="submit">Delete</button>
+                            <span class="col text-secondary">@comment.CreationDate</span>
+                            <div class="col"><button class="btn btn-outline-danger px-5" type="submit">Delete</button></div>
                         }
                         else
                         {

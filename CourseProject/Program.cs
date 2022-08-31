@@ -26,6 +26,7 @@ builder.Services.AddControllersWithViews(mvcOtions =>
 builder.Services.AddDbContext<DbContextAsync>(options =>
 {
     options.UseSqlServer(connection);
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {

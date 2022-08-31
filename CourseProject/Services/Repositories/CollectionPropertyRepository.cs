@@ -44,6 +44,15 @@ namespace CourseProject.Services.Repositories
         {
             return await _context.CollectionProperties.Where(x => x.CollectionId == collectionId).ToListAsync();
         }
-
+        public async Task DeleteRangeAsync(IEnumerable<CollectionProperty> entities)
+        {
+            _context.CollectionProperties.RemoveRange(entities);
+            await _context.SaveChangesAsync();
+        }
+        public async Task UpdateAsync(CollectionProperty entity)
+        {
+            await Task.CompletedTask;
+            _context.CollectionProperties.Update(entity);
+        }
     }
 }

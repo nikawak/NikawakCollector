@@ -34,5 +34,10 @@ namespace CourseProject.Services.Repositories
         {
             return await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
         }
+        public async Task UpdateAsync(Comment entity)
+        {
+            await Task.CompletedTask;
+            _context.Comments.Update(entity);
+        }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using CourseProject.Models;
 using CourseProject.Models.ViewModels;
 using CourseProject.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 
 namespace CourseProject.Controllers
 {
+    
     public class ItemController : Controller
     {
         private IAccountService _accountService;
@@ -17,7 +19,7 @@ namespace CourseProject.Controllers
             _unitOfWork = unitOfWork;
         }
 
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> CreateItem(Guid collectionId)
         {
@@ -81,8 +83,6 @@ namespace CourseProject.Controllers
             return RedirectToAction("Collectionitems", new { collectionId });
         }
 
-
-
         public async Task<IActionResult> CollectionItems(Guid collectionId)
         {
             var items = await _unitOfWork.ItemRepository.GetByCollectionAsync(collectionId);
@@ -90,13 +90,19 @@ namespace CourseProject.Controllers
 
             var tuple = new Tuple<List<Item>, Collection>(items.ToList(), collection);
 
-            var isOwner = collection.UserId == await _accountService.GetUserIdAsync(User);
-            var isAdmin = User.IsInRole("Admin");
-            ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
-
+            if (User.Identity.IsAuthenticated)
+            {
+                var isOwner = collection.UserId == await _accountService.GetUserIdAsync(User);
+                var isAdmin = User.IsInRole("Admin");
+                ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
+            }
+            else
+            {
+                ViewBag.IsOwnerOrAdmin = false;
+            }
             return View(tuple);
         }
-
+        [Authorize]
         public async Task<IActionResult> ShowItem(Guid itemId)
         {
             var item = await _unitOfWork.ItemRepository.GetAsync(itemId);
@@ -150,12 +156,12 @@ namespace CourseProject.Controllers
                 await _unitOfWork.LikeRepository.DeleteAsync(like);
             }
 
-
             return RedirectToAction("ShowItem", new { itemId });
         }
-
+        
         public async Task<IActionResult> SearchItems(string searchString)
         {
+            if (string.IsNullOrEmpty(searchString)) return View(null);
             var strings = searchString.Replace("#", "").Split(" ");
             var tags = await _unitOfWork.TagRepository.GetAllAsync();
             var tagCount = new Dictionary<Tag, int>();
