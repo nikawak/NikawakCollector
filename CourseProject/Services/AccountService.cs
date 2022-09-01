@@ -2,6 +2,7 @@
 using CourseProject.Models.ViewModels;
 using CourseProject.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace CourseProject.Services
@@ -10,13 +11,15 @@ namespace CourseProject.Services
     {
         private UserManager<IdentityUser> _userManager;
         private SignInManager<IdentityUser> _signInManager;
+        private IUnitOfWork _unitOfWork;
 
         public IdentityResult ErrorState { get; set; }
 
-        public AccountService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -28,6 +31,10 @@ namespace CourseProject.Services
 
             signInResult = await _signInManager.PasswordSignInAsync(user, userVM.Password, false, false);
 
+            if (!await _userManager.IsInRoleAsync(user, "User"))
+            {
+                await LogoutAsync();
+            }
             return signInResult;
         }
 
@@ -63,5 +70,50 @@ namespace CourseProject.Services
             return id;
         }
 
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
+        public async Task DeleteUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            await _userManager.RemoveFromRolesAsync(user, roles);
+            await _unitOfWork.CollectionRepository.DeleteByUserAsync(id);
+            await _unitOfWork.CommentRepository.DeleteByUserAsync(id);
+            await _unitOfWork.LikeRepository.DeleteByUserAsync(id);
+
+            await _userManager.DeleteAsync(user);
+        }
+        public async Task AddToAdminAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            await _userManager.AddToRoleAsync(user, "Admin");
+        }
+        public async Task DeleteFromAdminAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            await _userManager.RemoveFromRoleAsync(user, "Admin");
+        }
+        public async Task BlockUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            await _userManager.RemoveFromRolesAsync(user, roles);
+        }
+        public async Task UnblockUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            await _userManager.AddToRoleAsync(user, "User");
+        }
+
+        public IEnumerable<IdentityUser> GetUsers()
+        {
+            return _userManager.Users;
+        }
     }
 }

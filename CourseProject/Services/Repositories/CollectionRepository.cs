@@ -45,5 +45,22 @@ namespace CourseProject.Services.Repositories
             _context.Collections.Update(entity);
             await _context.SaveChangesAsync();
         }
+        public async Task DeleteByUserAsync(string id)
+        {
+            var collections = _context.Collections
+                .Include(p => p.Properties)
+                .Include(i => i.CollectionItems)
+                    .ThenInclude(t => t.Tags)
+                .Include(i => i.CollectionItems)
+                    .ThenInclude(p => p.Properties)
+                .Include(i => i.CollectionItems)
+                    .ThenInclude(l => l.Likes)
+                .Include(i => i.CollectionItems)
+                    .ThenInclude(c => c.Comments)
+                .Where(u => u.UserId == id).ToList();
+
+            _context.Collections.RemoveRange(collections);
+            await _context.SaveChangesAsync();
+        }
     }
 }

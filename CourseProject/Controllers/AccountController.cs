@@ -62,6 +62,11 @@ namespace CourseProject.Controllers
             }
             return View();
         }
+        public async Task<IActionResult> Logout()
+        {
+            await _accountService.LogoutAsync();
+            return RedirectToAction("Authorize");
+        }
 
     }
 }

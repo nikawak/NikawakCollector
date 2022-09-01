@@ -1,0 +1,47 @@
+﻿@model IEnumerable<IdentityUser>
+<div class="container">
+    <form>
+       
+                
+        <div>          
+            <button type="submit" class="btn btn-outline-primary" asp-action="Unblock" asp-controller="Admin">Unblock<i class="bi bi-shield"></i></button>
+            <button type="submit" class="btn btn-outline-danger" asp-action="Block" asp-controller="Admin">Block<i class="bi bi-shield-fill-x"></i></button>
+            <button type="submit" class="btn btn-outline-danger" asp-action="Delete" asp-controller="Admin">Delete<i class="bi bi-shield-slash-fill"></i></button>
+            <button type="submit" class="btn btn-outline-primary" asp-action="AddToAdmin" asp-controller="Admin">Add to admin<i class="bi bi-shield-slash-fill"></i></button>
+            <button type="submit" class="btn btn-outline-danger" asp-action="DeleteFromAdmin" asp-controller="Admin">Delete from admin<i class="bi bi-shield-slash-fill"></i></button>
+        </div>
+  
+        
+        <table class="table shadow-lg">
+            <tr>
+                <th><input name="selectAll" class="form-check" type="checkbox"/> Select all</th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+
+            </tr>
+
+            @foreach(var user in Model)
+            { 
+                <tr>
+                    <td><input type="checkbox" value="@user.Id" class="form-check cb" name="userId"/></td>
+                    <td>@user.Id</td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td></td>
+                </tr>
+                    
+            }
+            
+        </table>
+    </form>
+</div>
+
+@section scripts{
+    <script type="text/javascript">  
+    $(document).on(' change', 'input[name="selectAll"]', function () {
+       $('.cb').prop("checked", this.checked);
+    });
+    
+</script> 
+}

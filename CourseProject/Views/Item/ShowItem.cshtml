@@ -1,5 +1,7 @@
 ﻿@model Tuple<Item, Collection, string>
 
+@inject SignInManager<IdentityUser> signInManager
+
 @await Html.PartialAsync("_ChangeLike.cshtml", @Model.Item1, ViewData)
 
 @{
@@ -11,27 +13,29 @@
     var properties = @item.Properties;
 
     <div class="card m-3 text-center bg-white shadow">
-        <div>
-            <div class="card-title"><h3>@item.Name</h3></div>
-            <div class="card-text text-center">
-                <div class="text-wrap">
+            <div>
+                <div class="card-title"><h3>@item.Name</h3></div>
+                <div class="card-text text-center">
+                    <div class="text-wrap">
 
-                @for(int j = 0; j < properties.Count; j++)
+                    @for(int j = 0; j < properties.Count; j++)
                 {
-                    <span class="mb-1">@collection.Properties[j].Name: @properties[j].PropertyValue</span><br class="m-0"/>
+                        <span class="mb-1">@collection.Properties[j].Name: @properties[j].PropertyValue</span><br class="m-0"/>
                 }
 
 
-                @foreach(var tag in item.Tags)
+                    @foreach(var tag in item.Tags)
                 {
-                    <span>@tag.Name </span>
+                        <span>@tag.Name </span>
                 }
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
-
-    @await Html.PartialAsync("_CreateComment.cshtml", new Comment(){ SenderId = sender, ItemId = item.Id})
+    @if(signInManager.IsSignedIn(User))
+    {
+        @await Html.PartialAsync("_CreateComment.cshtml", new Comment(){ SenderId = sender, ItemId = item.Id})
+    }
 
     <div class="text-center m-5">
 

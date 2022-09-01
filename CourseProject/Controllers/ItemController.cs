@@ -102,7 +102,7 @@ namespace CourseProject.Controllers
             }
             return View(tuple);
         }
-        [Authorize]
+
         public async Task<IActionResult> ShowItem(Guid itemId)
         {
             var item = await _unitOfWork.ItemRepository.GetAsync(itemId);

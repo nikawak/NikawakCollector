@@ -39,10 +39,20 @@ namespace CourseProject.Services.Repositories
         {
             return await _context.Likes.FirstOrDefaultAsync(x => x.SenderId == userId && x.ItemId == itemId);
         }
+
         public async Task UpdateAsync(Like entity)
         {
-            await Task.CompletedTask;
             _context.Likes.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteByUserAsync(string id)
+        {
+            var likes = _context.Likes
+                .Where(u => u.SenderId == id).ToList();
+
+            _context.Likes.RemoveRange(likes);
+            await _context.SaveChangesAsync();
         }
     }
 }

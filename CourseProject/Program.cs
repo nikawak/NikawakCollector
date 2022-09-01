@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration.GetConnectionString("GearHostConnection");
 
 
-
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICollectionRepository, CollectionRepository>();
 builder.Services.AddScoped<ICollectionPropertyRepository, CollectionPropertyRepository>();

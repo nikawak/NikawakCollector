@@ -25,6 +25,15 @@ namespace CourseProject.Services.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteByUserAsync(string id)
+        {
+            var comments = _context.Comments
+                .Where(u => u.SenderId == id).ToList();
+
+            _context.Comments.RemoveRange(comments);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Comment>> GetAllAsync()
         {
             return await _context.Comments.ToListAsync();
@@ -39,5 +48,6 @@ namespace CourseProject.Services.Repositories
             await Task.CompletedTask;
             _context.Comments.Update(entity);
         }
+        
     }
 }
