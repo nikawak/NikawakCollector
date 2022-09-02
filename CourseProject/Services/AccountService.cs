@@ -9,13 +9,13 @@ namespace CourseProject.Services
 {
     public class AccountService : IAccountService
     {
-        private UserManager<IdentityUser> _userManager;
-        private SignInManager<IdentityUser> _signInManager;
+        private UserManager<User> _userManager;
+        private SignInManager<User> _signInManager;
         private IUnitOfWork _unitOfWork;
 
         public IdentityResult ErrorState { get; set; }
 
-        public AccountService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUnitOfWork unitOfWork)
+        public AccountService(UserManager<User> userManager, SignInManager<User> signInManager, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -31,7 +31,7 @@ namespace CourseProject.Services
 
             signInResult = await _signInManager.PasswordSignInAsync(user, userVM.Password, false, false);
 
-            if (!await _userManager.IsInRoleAsync(user, "User"))
+            if (user.IsBlocked)
             {
                 await LogoutAsync();
             }
@@ -40,10 +40,11 @@ namespace CourseProject.Services
 
         public async Task<SignInResult> RegisterAsync(CreateUserViewModel userVM)
         {
-            var user = new IdentityUser()
+            var user = new User()
             {
                 UserName = userVM.UserName,
                 Email = userVM.Email,
+                IsBlocked = false
             };
 
             var resultUser = await _userManager.CreateAsync(user, userVM.Password);
@@ -58,7 +59,7 @@ namespace CourseProject.Services
             return signInResult;
         }
 
-        public async Task<IdentityUser> GetUserAsync(ClaimsPrincipal principal)
+        public async Task<User> GetUserAsync(ClaimsPrincipal principal)
         {
             return await _userManager.GetUserAsync(principal);
         }
@@ -101,19 +102,27 @@ namespace CourseProject.Services
         {
             var user = await _userManager.FindByIdAsync(id);
 
-            var roles = await _userManager.GetRolesAsync(user);
 
-            await _userManager.RemoveFromRolesAsync(user, roles);
+            user.IsBlocked = true;
+            await _userManager.UpdateAsync(user);
+            await DeleteUserAsync(user.Id);
+            await _userManager.CreateAsync(user);
         }
         public async Task UnblockUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            await _userManager.AddToRoleAsync(user, "User");
+
+            user.IsBlocked = false;
+            await _userManager.UpdateAsync(user);
         }
 
-        public IEnumerable<IdentityUser> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
-            return _userManager.Users;
+            return _userManager.Users.ToList();
+        }
+        public async Task<IEnumerable<string>> GetRolesAsync(User user)
+        {
+            return await _userManager.GetRolesAsync(user);
         }
     }
 }

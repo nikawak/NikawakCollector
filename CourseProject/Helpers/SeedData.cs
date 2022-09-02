@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CourseProject.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace CourseProject.Helpers
 {
     public class SeedData : ISeedData
     {
         private RoleManager<IdentityRole> _roleManager;
-        private UserManager<IdentityUser> _userManager;
+        private UserManager<User> _userManager;
 
-        public SeedData(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public SeedData(RoleManager<IdentityRole> roleManager, UserManager<User> userManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -37,7 +38,7 @@ namespace CourseProject.Helpers
         }
         private async Task CreateDefaultAdmin()
         {
-            var userAdmin = new IdentityUser()
+            var userAdmin = new User()
             {
                 UserName = "admin",
                 Email = "Nikawak228@gmail.com"

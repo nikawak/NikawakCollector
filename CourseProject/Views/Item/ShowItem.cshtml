@@ -1,6 +1,6 @@
 ﻿@model Tuple<Item, Collection, string>
 
-@inject SignInManager<IdentityUser> signInManager
+@inject SignInManager<User> signInManager
 
 @await Html.PartialAsync("_ChangeLike.cshtml", @Model.Item1, ViewData)
 

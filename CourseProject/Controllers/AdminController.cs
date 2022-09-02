@@ -1,4 +1,5 @@
-﻿using CourseProject.Services.Interfaces;
+﻿using CourseProject.Models;
+using CourseProject.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,14 @@ namespace CourseProject.Controllers
         }
         public async Task<IActionResult> ManageUsers()
         {
+            var usersWithRoles = new Dictionary<User, IEnumerable<string>>();
+
             var users = _accountService.GetUsers();
+            foreach(var user in users)
+            {
+                var roles = await _accountService.GetRolesAsync(user);
+                usersWithRoles.Add(user, roles);
+            }
             return View(users);
         }
         public async Task<IActionResult> Block(string[] userId)

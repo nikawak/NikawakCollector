@@ -10,8 +10,9 @@ namespace CourseProject.Services.Interfaces
         Task<SignInResult> RegisterAsync(CreateUserViewModel userVM);
         Task<SignInResult> AuthorizeAsync(AuthorizeUserViewModel userVM);
         Task LogoutAsync();
-        Task<IdentityUser> GetUserAsync(ClaimsPrincipal userPrincipal);
-        IEnumerable<IdentityUser> GetUsers();
+        Task<User> GetUserAsync(ClaimsPrincipal userPrincipal);
+        IEnumerable<User> GetUsers();
+        Task<IEnumerable<string>> GetRolesAsync(User user);
         Task<string> GetUserIdAsync(ClaimsPrincipal userPrincipal);
 
         Task BlockUserAsync(string userId);

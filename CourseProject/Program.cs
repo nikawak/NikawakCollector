@@ -1,4 +1,5 @@
 using CourseProject.Helpers;
+using CourseProject.Models;
 using CourseProject.Services;
 using CourseProject.Services.Interfaces;
 using CourseProject.Services.Repositories;
@@ -27,7 +28,8 @@ builder.Services.AddDbContext<DbContextAsync>(options =>
     options.UseSqlServer(connection);
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 5;
     options.Password.RequireDigit = false;
@@ -43,6 +45,8 @@ builder.Services.ConfigureApplicationCookie(config =>
 {
     config.Cookie.Name = "Identity.Cookie";
     config.LoginPath = "/Account/Authorize";
+    config.AccessDeniedPath = "";
+    config.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
 
 var app = builder.Build();

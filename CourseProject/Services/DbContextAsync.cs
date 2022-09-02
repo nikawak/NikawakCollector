@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject.Services
 {
-    public class DbContextAsync : IdentityDbContext
+    public class DbContextAsync : IdentityDbContext<User>
     {
         public DbContextAsync(DbContextOptions options) : base(options) { }
 
