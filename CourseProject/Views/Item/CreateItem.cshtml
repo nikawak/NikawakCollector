@@ -5,7 +5,7 @@
     <div class="p-2 px-4">
         <form asp-action="CreateItem" asp-controller="Item" method="post">
                 
-            <div asp-validation-summary="All"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="d-flex flex-column m-2">
                     <label asp-for="Name"></label>
                     <input asp-for="Name" class="form-control" placeholder="Input item name"/>

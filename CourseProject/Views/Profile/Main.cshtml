@@ -1,7 +1,7 @@
 ﻿@model Tuple<List<Collection>, List<Item>, List<Tag>>
 
 @{
-    var count = 4;
+    var count = 5;
     var collections = @Model.Item1;
     var items = @Model.Item2;
     var tags = @Model.Item3;
@@ -9,12 +9,12 @@
     <div class="text-center">
     @if(collections.Count >= count && items.Count >= count){
         <h3>Biggest collections</h3>
-            <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 container d-flex justify-content-center">
+        <div class="row container justify-content-around">
                 @foreach(var collection in collections.Take(count))
                 {
-                    <div class="card shadow rounded mb-4 container">
+                    <div class="card col-sm-11 col-xl-4 shadow rounded mb-4">
 
-                        <img class="card-img-top img-fluid" src="@Url.Action("MegaImageRead", "Collection" , new {collectionId = collection.Id})"/>
+                        <img class="p-1 card-img-top img-fluid" src="@Url.Action("MegaImageRead", "Collection" , new {collectionId = collection.Id})"/>
 
 
                         <div class="card-body text-center">
@@ -22,15 +22,14 @@
                             <h5 class="card-subtitle">Theme: @collection.Theme</h5>
                             <p class="card-text">@Html.Raw(collection.Description)</p>
                     
-                            <div class="row">
+                            <div>
                                 <a asp-action="CollectionItems" asp-controller="Item" asp-route-collectionId="@collection.Id" class="btn btn-primary col m-2">See collection items</a>
                             </div>
                         </div>
 
                     </div>
                 }
-            </div>
-
+        </div>
                 <h3 class="mt-5">Lastest items</h3>
         <div>
                 <div class="row row-cols-3 justify-content-center">

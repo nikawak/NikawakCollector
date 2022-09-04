@@ -49,7 +49,7 @@
                             <button type="submit" class="btn btn-outline-primary col m-2">See more</button>
                             @if (ViewBag.IsOwnerOrAdmin)
                             {
-                               <button type="submit" asp-action="ShowItem" asp-controller="Item"
+                               <button type="submit" asp-action="DeleteItem" asp-controller="Item"
                                     asp-route-itemId="@items[i].Id"class="col btn btn-outline-danger col m-2">Delete</button>
                             }
                         </form>

@@ -54,8 +54,19 @@ namespace CourseProject.Services.Repositories
                 .Where(x => x.CollectionId == collectionId)
                 .Include(t => t.Tags).Include(p => p.Properties)
                 .Include(l => l.Likes).Include(c => c.Comments)
+                .Where(x => x.IsPrivate == false)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Item>> GetByCollectionWithPrivateAsync(Guid collectionId)
+        {
+            return await _context.Items
+                .Where(x => x.CollectionId == collectionId)
+                .Include(t => t.Tags).Include(p => p.Properties)
+                .Include(l => l.Likes).Include(c => c.Comments)
+                .ToListAsync();
+        }
+
         public async Task UpdateAsync(Item entity)
         {
             await Task.CompletedTask;

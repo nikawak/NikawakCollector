@@ -111,9 +111,6 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCollection(CollectionViewModel model, string[] propertyNames, string[] propertyTypes)
         {
-
-            var properties = CreateProperties(propertyNames, propertyTypes);
-
             string mime = "";
             string path = "";
 
@@ -130,7 +127,6 @@ namespace CourseProject.Controllers
             var collection = new Collection()
             {
                 Name = model.Name,
-                Properties = properties,
                 Description = model.Description,
                 Theme = model.Theme,
                 UserId = userId,
@@ -138,17 +134,16 @@ namespace CourseProject.Controllers
                 ImageMime = mime
             };
             
-
-
-            collection.Properties = properties;
-
-            await _unitOfWork.CollectionPropertyRepository.CreateRangeAsync(properties);
             await _unitOfWork.CollectionRepository.CreateAsync(collection);
+
+            var properties = CreateProperties(collection.Id, propertyNames, propertyTypes);
+            await _unitOfWork.CollectionPropertyRepository.CreateRangeAsync(properties);
+            
 
 
             return RedirectToAction("UserCollections", "Collection");
         }
-        public List<CollectionProperty> CreateProperties(string[] propertyNames, string[] propertyTypes)
+        public List<CollectionProperty> CreateProperties(Guid collectionId, string[] propertyNames, string[] propertyTypes)
         {
             List<CollectionProperty> properties = new();
             for (int i = 0; i < propertyNames.Length; i++)
@@ -160,6 +155,7 @@ namespace CourseProject.Controllers
                 {
                     Name = propertyName,
                     Type = propertyType,
+                    CollectionId = collectionId
                 };
                 properties.Add(collectionProperty);
             }

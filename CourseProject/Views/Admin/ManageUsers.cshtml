@@ -3,12 +3,12 @@
     <form>
        
                 
-        <div>          
-            <button type="submit" class="btn btn-outline-primary" asp-action="Unblock" asp-controller="Admin">Unblock<i class="bi bi-shield"></i></button>
-            <button type="submit" class="btn btn-outline-danger" asp-action="Block" asp-controller="Admin">Block<i class="bi bi-shield-fill-x"></i></button>
-            <button type="submit" class="btn btn-outline-danger" asp-action="Delete" asp-controller="Admin">Delete<i class="bi bi-shield-slash-fill"></i></button>
-            <button type="submit" class="btn btn-outline-primary" asp-action="AddToAdmin" asp-controller="Admin">Add to admin<i class="bi bi-shield-slash-fill"></i></button>
-            <button type="submit" class="btn btn-outline-danger" asp-action="DeleteFromAdmin" asp-controller="Admin">Delete from admin<i class="bi bi-shield-slash-fill"></i></button>
+        <div class="row">          
+            <button type="submit" class="col-4 col-lg-2 btn btn-outline-danger" asp-action="Block" asp-controller="Admin">Block<i class="bi bi-shield-fill-x"></i></button>
+            <button type="submit" class="col-4 col-lg-2 btn btn-outline-primary" asp-action="Unblock" asp-controller="Admin">Unblock<i class="bi bi-shield-fill"></i></button>
+            <button type="submit" class="col-4 col-lg-2 btn btn-outline-danger" asp-action="Delete" asp-controller="Admin">Delete<i class="bi bi-shield-slash-fill"></i></button>
+            <button type="submit" class="col-4 col-lg-2 btn btn-outline-primary" asp-action="AddToAdmin" asp-controller="Admin">Add to admin<i class="bi bi-shield-fill-plus"></i></button>
+            <button type="submit" class="col-4 col-lg-2 btn btn-outline-danger" asp-action="DeleteFromAdmin" asp-controller="Admin">Delete from admin<i class="bi bi-shield-fill-minus"></i></button>
         </div>
   
         

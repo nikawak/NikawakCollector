@@ -41,7 +41,8 @@ namespace CourseProject.Helpers
             var userAdmin = new User()
             {
                 UserName = "admin",
-                Email = "Nikawak228@gmail.com"
+                Email = "Nikawak228@gmail.com",
+                IsBlocked = false
             };
 
 

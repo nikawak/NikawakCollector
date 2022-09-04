@@ -37,40 +37,58 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateItem(CreateItemViewModel model, string[] values)
         {
-            var tags = ValidTags(model.Tags);
-            var existsTags = await _unitOfWork.TagRepository.ExistsAsync(tags.ToList());
-            var notExistsTags = await _unitOfWork.TagRepository.NotExistsAsync(tags);
-
-            if(notExistsTags != null)
-                await _unitOfWork.TagRepository.CreateRangeAsync(notExistsTags);
-
-            var item = new Item()
+            
+            if (ModelState.IsValid)
             {
-                Name = model.Name,
-                CollectionId = model.CollectionId,
-                CreatingDate = DateTime.Now,
-                IsPrivate = model.IsPrivate,
-                Tags = existsTags.Concat(notExistsTags).ToList()
-            };
-            await _unitOfWork.ItemRepository.CreateAsync(item);
-
-            var collectionProperties = (await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(model.CollectionId)).ToArray();
-            var properties = new List<Property>();
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                var property = new Property()
+                foreach (var value in values)
                 {
-                    ItemId = item.Id,
-                    CollectionPropertyId = collectionProperties[i].Id,
-                    PropertyValue = values[i]
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        ModelState.AddModelError("", "You need to fill all item properties");
+
+                        var col = await _unitOfWork.CollectionRepository.GetAsync(model.CollectionId);
+                        var props = await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(model.CollectionId);
+
+                        ViewBag.Collection = col;
+                        ViewBag.Properties = props;
+                        return View(model);
+                    }
+                }
+
+                var tags = ValidTags(model.Tags);
+                var existsTags = await _unitOfWork.TagRepository.ExistsAsync(tags.ToList());
+                var notExistsTags = await _unitOfWork.TagRepository.NotExistsAsync(tags);
+
+                if (notExistsTags != null)
+                    await _unitOfWork.TagRepository.CreateRangeAsync(notExistsTags);
+
+                var item = new Item()
+                {
+                    Name = model.Name,
+                    CollectionId = model.CollectionId,
+                    CreatingDate = DateTime.Now,
+                    IsPrivate = model.IsPrivate,
+                    Tags = existsTags.Concat(notExistsTags).ToList()
                 };
-                properties.Add(property);
+                await _unitOfWork.ItemRepository.CreateAsync(item);
+
+                var collectionProperties = (await _unitOfWork.CollectionPropertyRepository.GetByCollectionAsync(model.CollectionId)).ToArray();
+                var properties = new List<Property>();
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    var property = new Property()
+                    {
+                        ItemId = item.Id,
+                        CollectionPropertyId = collectionProperties[i].Id,
+                        PropertyValue = values[i]
+                    };
+                    properties.Add(property);
+                }
+
+                await _unitOfWork.PropertyRepository.CreateRangeAsync(properties);
             }
-
-            await _unitOfWork.PropertyRepository.CreateRangeAsync(properties);
-
-            return RedirectToAction("CollectionItems", new { item.CollectionId });
+            return RedirectToAction("CollectionItems", new { model.CollectionId });
         }
 
         [HttpPost]
@@ -80,7 +98,7 @@ namespace CourseProject.Controllers
             var collectionId = item.CollectionId;
             await _unitOfWork.ItemRepository.DeleteAsync(item);
 
-            return RedirectToAction("Collectionitems", new { collectionId });
+            return RedirectToAction("CollectionItems", new { collectionId });
         }
 
         public async Task<IActionResult> CollectionItems(Guid collectionId)
@@ -88,18 +106,21 @@ namespace CourseProject.Controllers
             var items = await _unitOfWork.ItemRepository.GetByCollectionAsync(collectionId);
             var collection = await _unitOfWork.CollectionRepository.GetAsync(collectionId);
 
-            var tuple = new Tuple<List<Item>, Collection>(items.ToList(), collection);
-
             if (User.Identity.IsAuthenticated)
             {
-                var isOwner = collection.UserId == await _accountService.GetUserIdAsync(User);
-                var isAdmin = User.IsInRole("Admin");
-                ViewBag.IsOwnerOrAdmin = isOwner || isAdmin;
+                var isOwnerOrAdmin = collection.UserId == await _accountService.GetUserIdAsync(User) || User.IsInRole("Admin");
+                ViewBag.IsOwnerOrAdmin = isOwnerOrAdmin;
+                if (isOwnerOrAdmin)
+                {
+                    items = await _unitOfWork.ItemRepository.GetByCollectionWithPrivateAsync(collectionId);
+                }
             }
             else
             {
                 ViewBag.IsOwnerOrAdmin = false;
             }
+
+            var tuple = new Tuple<List<Item>, Collection>(items.ToList(), collection);
             return View(tuple);
         }
 
