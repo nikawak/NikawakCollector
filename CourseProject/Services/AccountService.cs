@@ -27,14 +27,10 @@ namespace CourseProject.Services
         {
             var user = await _userManager.FindByNameAsync(userVM.UserName);
 
-            SignInResult signInResult = null;
+            if (user.IsBlocked) return SignInResult.LockedOut;
 
-            signInResult = await _signInManager.PasswordSignInAsync(user, userVM.Password, false, false);
+            var signInResult = await _signInManager.PasswordSignInAsync(user, userVM.Password, false, false);
 
-            if (user.IsBlocked)
-            {
-                await LogoutAsync();
-            }
             return signInResult;
         }
 

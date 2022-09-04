@@ -14,7 +14,10 @@ namespace CourseProject.Controllers
         {
             _accountService = accountService;
         }
-
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
         [HttpGet]
         public async Task<IActionResult> Register()
         {
@@ -54,6 +57,10 @@ namespace CourseProject.Controllers
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Main", "Profile");
+                }
+                else if (result.IsLockedOut)
+                {
+                    return RedirectToAction("AccessDenied", "Account");
                 }
                 else
                 {
