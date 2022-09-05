@@ -16,7 +16,7 @@ namespace CourseProject.Models.ViewModels
         [Display(Description = "Item Property")]
         public PropertyType PropertyType { get; set; }
 
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
 
     }
 }

@@ -24,7 +24,7 @@ namespace CourseProject.Controllers
                 var roles = await _accountService.GetRolesAsync(user);
                 usersWithRoles.Add(user, roles);
             }
-            return View(users);
+            return View(usersWithRoles);
         }
         public async Task<IActionResult> Block(string[] userId)
         {

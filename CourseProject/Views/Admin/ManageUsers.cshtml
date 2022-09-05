@@ -1,4 +1,6 @@
-﻿@model IEnumerable<User>
+﻿@model Dictionary<User, IEnumerable<string>>
+
+
 <div class="container">
     <form>
        
@@ -12,25 +14,35 @@
         </div>
   
         
-        <table class="table shadow-lg">
+        <table class="rounded-3 table shadow-lg">
             <tr>
-                <th><input name="selectAll" class="form-check" type="checkbox"/> Select all</th>
+                <th><input name="selectAll" class="form-check-input" type="checkbox"/> All</th>
                 <th>User ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Is Blocked</th>
+                <th>Roles</th>
 
             </tr>
 
-            @foreach(var user in Model)
+            @foreach(var userWithRoles in Model)
             { 
+                var user = userWithRoles.Key;
+                var roles = userWithRoles.Value;
+
                 <tr>
-                    <td><input type="checkbox" value="@user.Id" class="form-check cb" name="userId"/></td>
+                    <td><input type="checkbox" value="@user.Id" class="form-check-input cb" name="userId"/></td>
                     <td>@user.Id</td>
                     <td>@user.UserName</td>
                     <td>@user.Email</td>
-                    <td></td>
+                    <td>@user.IsBlocked</td>
+                    <td>
+                        @foreach(var role in roles)
+                        {
+                            <p class="m-1">@role</p>
+                        }
+                    </td>
                 </tr>
-                    
             }
             
         </table>

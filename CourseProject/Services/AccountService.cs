@@ -97,12 +97,9 @@ namespace CourseProject.Services
         public async Task BlockUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-
-
+            
             user.IsBlocked = true;
             await _userManager.UpdateAsync(user);
-            await DeleteUserAsync(user.Id);
-            await _userManager.CreateAsync(user);
         }
         public async Task UnblockUserAsync(string id)
         {

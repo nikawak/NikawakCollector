@@ -111,37 +111,50 @@ namespace CourseProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCollection(CollectionViewModel model, string[] propertyNames, string[] propertyTypes)
         {
-            string mime = "";
-            string path = "";
-
-            if (model.Image != null)
+            bool validProperties = true;
+            foreach(var prop in propertyNames)
             {
-                var imageName = DateTime.Now.ToString().Replace(".", "-") + model.Image.FileName;
-                var split = model.Image.FileName.Split(".");
-                mime = "image/" + split[split.Length - 1];
-
-                path = await MegaImageWrite(model.Image, imageName);
+                if (string.IsNullOrEmpty(prop))
+                {
+                    validProperties = false;
+                    ModelState.AddModelError("", "You need to fill all Collection properties");
+                    break;
+                }
             }
-            
-            var userId = await _accountService.GetUserIdAsync(User);
-            var collection = new Collection()
+            if (ModelState.IsValid)
             {
-                Name = model.Name,
-                Description = model.Description,
-                Theme = model.Theme,
-                UserId = userId,
-                ImagePath = path,
-                ImageMime = mime
-            };
-            
-            await _unitOfWork.CollectionRepository.CreateAsync(collection);
+                string mime = "";
+                string path = "";
 
-            var properties = CreateProperties(collection.Id, propertyNames, propertyTypes);
-            await _unitOfWork.CollectionPropertyRepository.CreateRangeAsync(properties);
-            
+                if (model.Image != null)
+                {
+                    var imageName = DateTime.Now.ToString().Replace(".", "-") + model.Image.FileName;
+                    var split = model.Image.FileName.Split(".");
+                    mime = "image/" + split[split.Length - 1];
 
+                    path = await MegaImageWrite(model.Image, imageName);
+                }
 
-            return RedirectToAction("UserCollections", "Collection");
+                var userId = await _accountService.GetUserIdAsync(User);
+                var collection = new Collection()
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    Theme = model.Theme,
+                    UserId = userId,
+                    ImagePath = path,
+                    ImageMime = mime
+                };
+
+                await _unitOfWork.CollectionRepository.CreateAsync(collection);
+
+                var properties = CreateProperties(collection.Id, propertyNames, propertyTypes);
+                await _unitOfWork.CollectionPropertyRepository.CreateRangeAsync(properties);
+                return RedirectToAction("UserCollections", "Collection");
+            }
+            ViewBag.Theme = EnumConverter.GetCollectionThemes();
+            ViewBag.PropertyType = EnumConverter.GetPropertyTypes();
+            return View(model);
         }
         public List<CollectionProperty> CreateProperties(Guid collectionId, string[] propertyNames, string[] propertyTypes)
         {
