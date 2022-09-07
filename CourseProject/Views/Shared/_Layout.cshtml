@@ -75,12 +75,17 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - CourseProject 
-        </div>
+            &copy; 2022 - CourseProject <br />
+            Want to support author — <a asp-action="Index" asp-controller="Payment">Support</a>
+        </div> 
     </footer>
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- payment -->
+    <script src="https://js.braintreegateway.com/web/dropin/1.33.4/js/dropin.min.js"></script>
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
 
     <!-- drag and drop -->
     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>

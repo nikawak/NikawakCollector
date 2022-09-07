@@ -17,7 +17,12 @@ builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ISeedData, SeedData>();
+
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddSingleton<IPaymentService, PaymentService>();
+
+builder.Services.Configure<PaymentSettings>(builder.Configuration.GetSection("BrainTree"));
 
 builder.Services.AddControllersWithViews(mvcOtions =>
 {

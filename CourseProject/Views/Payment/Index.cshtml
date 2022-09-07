@@ -1,0 +1,43 @@
+﻿@model TransactionViewModel
+
+<form asp-action="Index" asp-controller="Payment" method="post">
+    @if (ViewBag.Result == null)
+    {
+        <div class="container shadow-lg bg-white rounded-3 justify-content-center">
+            <div>
+            <span>Amount: </span>
+            <input asp-for="Amount" type="number"/>
+            <input asp-for="NonceMethod" id="nonceMethod" type="text" hidden/>
+        </div>
+        <div id="dropin-container"></div>
+        <button id="submit-button" class="btn btn-primary" type="button">Choose card</button>
+    
+        <button class="btn btn-success">Send money</button>
+   
+        </div>
+    }
+    else{
+        <h1>@ViewBag.Result</h1>
+        <a asp-action="Main" asp-controller="Profile" class="btn btn-primary">Return to profile</a>
+    }
+</form>
+
+@section Scripts{
+    <script src="https://js.braintreegateway.com/web/dropin/1.33.4/js/dropin.js"></script>
+<script>
+        var button = document.querySelector('#submit-button');
+        var token = "@ViewBag.Token";
+
+        braintree.dropin.create({
+            authorization: token,
+            selector: '#dropin-container'
+        }, function (err, instance) {
+            button.addEventListener('click', function () {
+                instance.requestPaymentMethod(function (err, payload) {
+                    var method = document.getElementById('#nonceMethod');
+                    document.querySelector("#nonceMethod").value = payload.nonce;
+                });
+            })
+        });
+</script>
+}
